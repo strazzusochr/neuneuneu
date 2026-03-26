@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JETBRAIN — CORONA CONTROL ULTIMATE · MASTERPLAN KONTROLLPROTOKOLL V3.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg-void: #030608;
+    --bg-deep: #060c10;
+    --bg-panel: #0a1420;
+    --bg-card: #0e1c2c;
+    --bg-hover: #122236;
+    --accent-electric: #00d4ff;
+    --accent-cyan: #00ffcc;
+    --accent-gold: #ffd600;
+    --accent-amber: #ff9800;
+    --accent-red: #ff2244;
+    --accent-green: #00ff88;
+    --accent-purple: #b054ff;
+    --border-dim: rgba(0,212,255,0.12);
+    --border-glow: rgba(0,212,255,0.4);
+    --border-warn: rgba(255,152,0,0.5);
+    --border-danger: rgba(255,34,68,0.6);
+    --text-primary: #e8f4ff;
+    --text-secondary: #7a9ab5;
+    --text-dim: #3a5068;
+    --text-code: #00ffcc;
+    --font-display: 'Orbitron', monospace;
+    --font-ui: 'Rajdhani', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-terminal: 'Share Tech Mono', monospace;
+    --glow-blue: 0 0 20px rgba(0,212,255,0.3), 0 0 60px rgba(0,212,255,0.1);
+    --glow-amber: 0 0 20px rgba(255,152,0,0.4);
+    --glow-red: 0 0 20px rgba(255,34,68,0.5);
+    --glow-green: 0 0 20px rgba(0,255,136,0.3);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(176,84,255,0.04) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,212,255,0.015) 60px, rgba(0,212,255,0.015) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,212,255,0.015) 60px, rgba(0,212,255,0.015) 61px);
+  }
+
+  .page-wrapper { max-width: 1800px; margin: 0 auto; padding: 20px 24px 60px; }
+
+  /* ═══════════ HEADER ═══════════ */
+  .masthead {
+    position: relative;
+    border: 1px solid var(--border-glow);
+    border-radius: 4px;
+    padding: 32px 40px 28px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, rgba(6,12,16,0.98) 50%);
+    box-shadow: var(--glow-blue), inset 0 0 80px rgba(0,212,255,0.02);
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-electric), var(--accent-cyan), var(--accent-electric), transparent);
+    animation: scanline 3s linear infinite;
+  }
+  @keyframes scanline { 0%{opacity:1} 50%{opacity:0.3} 100%{opacity:1} }
+  .masthead::after {
+    content: 'CLASSIFIED // PROJEKT-INTERN // JETBRAIN-OPS';
+    position: absolute; top: 10px; right: 20px;
+    font-family: var(--font-terminal); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  .masthead-grid { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 900;
+    color: var(--accent-electric);
+    letter-spacing: 4px;
+    text-shadow: var(--glow-blue);
+    line-height: 1.1;
+  }
+  .project-subtitle {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 400;
+    color: var(--accent-cyan);
+    letter-spacing: 6px;
+    margin-top: 6px;
+    opacity: 0.8;
+  }
+  .doc-meta {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-secondary); margin-top: 16px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .doc-meta span { display: flex; flex-direction: column; gap: 2px; }
+  .doc-meta .label { color: var(--text-dim); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
+  .doc-meta .val { color: var(--accent-cyan); }
+
+  .status-badge {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 2px;
+    font-family: var(--font-display); font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; white-space: nowrap;
+  }
+  .badge-danger { background: rgba(255,34,68,0.15); border: 1px solid var(--accent-red); color: var(--accent-red); box-shadow: var(--glow-red); }
+  .badge-warn { background: rgba(255,152,0,0.12); border: 1px solid var(--accent-amber); color: var(--accent-amber); }
+  .badge-info { background: rgba(0,212,255,0.08); border: 1px solid var(--border-glow); color: var(--accent-electric); }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* ═══════════ HARDWARE WARNING ═══════════ */
+  .hw-alert {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 24px;
+  }
+  .alert-box {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 20px 24px;
+    position: relative; overflow: hidden;
+  }
+  .alert-box.danger {
+    border-color: var(--accent-red);
+    background: rgba(255,34,68,0.05);
+    box-shadow: var(--glow-red);
+  }
+  .alert-box.safe {
+    border-color: var(--accent-green);
+    background: rgba(0,255,136,0.04);
+    box-shadow: var(--glow-green);
+  }
+  .alert-title {
+    font-family: var(--font-display); font-size: 12px; font-weight: 700;
+    letter-spacing: 4px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .alert-box.danger .alert-title { color: var(--accent-red); }
+  .alert-box.safe .alert-title { color: var(--accent-green); }
+
+  .temp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .temp-item { text-align: center; }
+  .temp-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+  .temp-value { font-family: var(--font-display); font-size: 26px; font-weight: 900; color: var(--accent-red); text-shadow: var(--glow-red); }
+  .temp-value.safe { color: var(--accent-green); text-shadow: var(--glow-green); }
+  .temp-bar-wrap { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .temp-bar { height: 100%; border-radius: 3px; }
+  .temp-bar.crit { background: linear-gradient(90deg, #ff9800, #ff2244); width: 96%; animation: temppulse 0.5s infinite alternate; }
+  .temp-bar.ok { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 48%; }
+  @keyframes temppulse { from{opacity:1} to{opacity:0.5} }
+
+  .rule-list { list-style: none; }
+  .rule-list li {
+    font-family: var(--font-mono); font-size: 11px;
+    padding: 4px 0; display: flex; gap: 8px; align-items: flex-start;
+    color: var(--text-secondary);
+  }
+  .icon-x { color: var(--accent-red); }
+  .icon-ok { color: var(--accent-green); }
+
+  /* ═══════════ SECTION HEADERS ═══════════ */
+  .section {
+    margin-bottom: 24px;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 24px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-dim);
+    border-left: 3px solid var(--accent-electric);
+    border-radius: 2px 4px 4px 2px;
+    margin-bottom: 16px;
+  }
+  .section-num {
+    font-family: var(--font-display); font-size: 10px; font-weight: 700;
+    color: var(--accent-electric); letter-spacing: 4px; opacity: 0.6;
+    min-width: 70px;
+  }
+  .section-title {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--text-primary); letter-spacing: 3px; flex: 1;
+  }
+  .section-pct {
+    font-family: var(--font-display); font-size: 22px; font-weight: 900;
+    color: var(--accent-electric);
+  }
+
+  /* ═══════════ HORIZONTAL PHASE TIMELINE ═══════════ */
+  .phase-timeline { position: relative; margin-bottom: 24px; }
+  .timeline-track {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    position: relative;
+  }
+  .timeline-track::before {
+    content: '';
+    position: absolute;
+    top: 32px; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent-electric), var(--accent-purple));
+    z-index: 0;
+    opacity: 0.3;
+  }
+
+  .phase-node {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px;
+  }
+  .phase-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 2px solid;
+    font-family: var(--font-display); font-size: 9px; font-weight: 700;
+    letter-spacing: 1px; text-align: center; cursor: default;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .phase-circle:hover { transform: scale(1.08); }
+  .phase-num { font-size: 18px; font-weight: 900; line-height: 1; }
+  .phase-node-label {
+    font-family: var(--font-ui); font-size: 11px; font-weight: 600;
+    text-align: center; color: var(--text-secondary);
+    letter-spacing: 1px; line-height: 1.3;
+  }
+  .phase-node-wt {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-dim); text-align: center;
+  }
+  .phase-node-pct {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    color: var(--accent-cyan);
+  }
+
+  /* Phase colors */
+  .ph1 { border-color: var(--accent-electric); color: var(--accent-electric); background: rgba(0,212,255,0.08); }
+  .ph2 { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0,255,204,0.06); }
+  .ph3 { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(255,214,0,0.07); }
+  .ph4 { border-color: var(--accent-amber); color: var(--accent-amber); background: rgba(255,152,0,0.08); }
+  .ph5 { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(176,84,255,0.07); }
+  .ph6 { border-color: var(--accent-green); color: var(--accent-green); background: rgba(0,255,136,0.07); }
+
+  /* ═══════════ GESAMTFORTSCHRITT ═══════════ */
+  .total-progress {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 4px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+  }
+  .total-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+  }
+  .total-label { font-family: var(--font-display); font-size: 11px; letter-spacing: 4px; color: var(--text-secondary); }
+  .total-pct-big { font-family: var(--font-display); font-size: 48px; font-weight: 900; color: var(--accent-red); line-height: 1; }
+  .total-pct-big.started { color: var(--accent-electric); }
+
+  .mega-bar { height: 20px; background: rgba(255,255,255,0.04); border-radius: 2px; overflow: hidden; position: relative; }
+  .mega-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-electric), var(--accent-cyan)); border-radius: 2px; position: relative; transition: width 1s; }
+  .mega-bar-fill::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 3px; background: white; box-shadow: 0 0 10px white; animation: blink 1s infinite; }
+
+  .phase-bars-grid {
+    display: grid; grid-template-columns: repeat(6,1fr); gap: 8px; margin-top: 16px;
+  }
+  .mini-phase-bar { }
+  .mpb-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .mpb-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow:hidden; }
+  .mpb-fill { height: 100%; border-radius: 2px; width: 0%; }
+  .mpb-pct { font-family: var(--font-display); font-size: 11px; margin-top: 3px; }
+
+  /* ═══════════ PHASE DETAIL CARDS ═══════════ */
+  .phase-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 24px;
+  }
+  .phase-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .phase-card-header {
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border-dim);
+  }
+  .phase-icon {
+    width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 16px; font-weight: 900; border: 2px solid currentColor;
+    flex-shrink: 0;
+  }
+  .phase-card-meta { flex: 1; }
+  .phase-card-name { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 2px; }
+  .phase-card-week { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+  .phase-card-weight {
+    font-family: var(--font-display); font-size: 28px; font-weight: 900; line-height: 1;
+    text-align: right;
+  }
+  .phase-card-body { padding: 16px 20px; }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .pr-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); width: 140px; flex-shrink: 0; }
+  .pr-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .pr-fill { height: 100%; border-radius: 2px; }
+  .pr-pct { font-family: var(--font-display); font-size: 11px; font-weight: 700; width: 36px; text-align: right; }
+
+  /* Status chips */
+  .status-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 8px; border-radius: 2px; font-family: var(--font-mono); font-size: 10px;
+    border: 1px solid; letter-spacing: 1px;
+  }
+  .chip-pending { border-color: rgba(122,154,181,0.3); color: var(--text-secondary); background: rgba(122,154,181,0.05); }
+  .chip-active { border-color: var(--accent-electric); color: var(--accent-electric); background: rgba(0,212,255,0.08); }
+  .chip-done { border-color: var(--accent-green); color: var(--accent-green); background: rgba(0,255,136,0.06); }
+  .chip-block { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255,34,68,0.07); }
+
+  .substep-list { list-style: none; }
+  .substep-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-family: var(--font-ui); font-size: 13px; font-weight: 400;
+  }
+  .substep-list li:last-child { border-bottom: none; }
+  .chk { width: 14px; height: 14px; border: 1px solid var(--text-dim); border-radius: 2px; flex-shrink: 0; margin-top: 2px; }
+  .substep-text { flex: 1; color: var(--text-secondary); line-height: 1.4; }
+  .substep-pct { font-family: var(--font-display); font-size: 10px; color: var(--text-dim); flex-shrink: 0; }
+
+  /* ═══════════ LARGE PHASE FULL WIDTH ═══════════ */
+  .phase-card-full { grid-column: 1 / -1; }
+
+  /* ═══════════ EVENT TIMELINE ═══════════ */
+  .event-timeline {
+    background: var(--bg-panel); border: 1px solid var(--border-dim);
+    border-radius: 4px; padding: 0; overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .etl-header {
+    padding: 16px 24px; background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-dim);
+    font-family: var(--font-display); font-size: 12px; letter-spacing: 3px;
+    color: var(--accent-electric); display: flex; justify-content: space-between; align-items: center;
+  }
+  .etl-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 1fr auto;
+    gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    align-items: stretch;
+  }
+  .etl-row:hover { background: rgba(0,212,255,0.03); }
+  .etl-row:last-child { border-bottom: none; }
+  .etl-cell {
+    padding: 10px 14px; font-family: var(--font-ui); font-size: 12px;
+    border-right: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: center;
+  }
+  .etl-cell:last-child { border-right: none; }
+  .etl-time { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--accent-electric); }
+  .etl-event { color: var(--text-primary); font-weight: 600; }
+  .etl-level { display: flex; align-items: center; gap: 8px; }
+  .etl-bar-wrap { width: 80px; height: 6px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .etl-bar-fill { height: 100%; border-radius: 2px; }
+  .etl-pct-val { font-family: var(--font-display); font-size: 11px; font-weight: 700; width: 36px; }
+  .etl-actors { color: var(--text-secondary); font-size: 11px; }
+  .etl-status-cell { padding: 10px 14px; display: flex; align-items: center; }
+
+  /* Eskalation colors */
+  .esk-0   { background: #00ff88; }
+  .esk-5   { background: #44dd88; color: #00ff88; }
+  .esk-10  { background: #88cc44; color: #88cc44; }
+  .esk-15  { background: #aacc00; color: #aacc00; }
+  .esk-25  { background: #ddaa00; color: #ddaa00; }
+  .esk-45  { background: #ff8800; color: #ff8800; }
+  .esk-50  { background: #ff6600; color: #ff6600; }
+  .esk-60  { background: #ff4400; color: #ff4400; }
+  .esk-70  { background: #ff2200; color: #ff2200; }
+  .esk-65  { background: #ff3300; }
+  .esk-80  { background: #ff1100; color: #ff1100; }
+  .esk-85  { background: #ff0800; color: #ff0800; }
+  .esk-90  { background: #ff0044; color: #ff0044; }
+  .esk-95  { background: #ee0055; color: #ee0055; }
+  .esk-100 { background: #ff2244; box-shadow: 0 0 8px rgba(255,34,68,0.8); color: #ff2244; }
+
+  /* ═══════════ MATRICES ═══════════ */
+  .matrix-grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .matrix-card {
+    background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; padding: 18px;
+  }
+  .matrix-title { font-family: var(--font-display); font-size: 10px; letter-spacing: 3px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
+  .matrix-value { font-family: var(--font-display); font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .matrix-desc { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+
+  /* ═══════════ NPC TABLE ═══════════ */
+  .npc-table-wrap { background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+  .npc-table { width: 100%; border-collapse: collapse; }
+  .npc-table th {
+    background: var(--bg-deep); padding: 10px 14px;
+    font-family: var(--font-display); font-size: 10px; letter-spacing: 3px;
+    color: var(--accent-electric); text-align: left; border-bottom: 1px solid var(--border-dim);
+  }
+  .npc-table td {
+    padding: 9px 14px; font-family: var(--font-ui); font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-secondary);
+  }
+  .npc-table tr:hover td { background: rgba(0,212,255,0.03); }
+  .npc-table tr:last-child td { border-bottom: none; }
+  .npc-id { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+  .npc-name { color: var(--text-primary); font-weight: 600; }
+  .poly-val { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--accent-gold); }
+  .lod-mini { display: flex; gap: 3px; }
+  .lod-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); }
+  .lod-dot.pending { background: rgba(122,154,181,0.1); }
+  .npc-progress-bar { width: 100px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow:hidden; }
+  .npc-pb-fill { height:100%; border-radius:2px; background:linear-gradient(90deg, var(--accent-electric), var(--accent-cyan)); width:0%; }
+
+  /* ═══════════ QA CHECKLIST ═══════════ */
+  .qa-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+  .qa-panel {
+    background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden;
+  }
+  .qa-panel-header {
+    background: var(--bg-deep); padding: 12px 18px;
+    font-family: var(--font-display); font-size: 10px; letter-spacing: 3px;
+    border-bottom: 1px solid var(--border-dim);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .qa-panel-body { padding: 12px 18px; }
+  .qa-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .qa-item:last-child { border-bottom: none; }
+  .qa-chk { width: 14px; height: 14px; border: 1px solid var(--text-dim); border-radius: 2px; flex-shrink: 0; margin-top: 2px; }
+  .qa-text { flex: 1; font-family: var(--font-ui); font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .qa-indicator { font-family: var(--font-display); font-size: 9px; color: var(--text-dim); flex-shrink: 0; }
+  .qa-progress-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-dim); }
+  .qa-pbar { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .qa-pbar-fill { height:100%; background: linear-gradient(90deg, var(--accent-electric), var(--accent-cyan)); width:0%; border-radius:2px; }
+  .qa-pct { font-family:var(--font-display); font-size:11px; color:var(--accent-electric); font-weight:700; }
+
+  /* ═══════════ DEPLOYMENT PIPELINE ═══════════ */
+  .deploy-pipe {
+    background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px;
+    padding: 24px; margin-bottom: 24px;
+  }
+  .pipe-nodes {
+    display: flex; align-items: center; gap: 0; overflow-x: auto;
+  }
+  .pipe-node {
+    flex-shrink: 0; text-align: center; min-width: 130px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .pipe-icon {
+    width: 52px; height: 52px; border-radius: 4px; border: 1px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 9px; font-weight: 700;
+    letter-spacing: 1px; text-align: center; line-height: 1.2; padding: 4px;
+  }
+  .pipe-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+  .pipe-status { font-family: var(--font-display); font-size: 9px; letter-spacing: 1px; }
+  .pipe-arrow {
+    flex-shrink: 0; width: 40px; display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim); font-size: 18px; padding-bottom: 28px;
+  }
+  .pn-cloud { border-color: var(--accent-electric); color: var(--accent-electric); background: rgba(0,212,255,0.07); }
+  .pn-github { border-color: #ffffff; color: #ffffff; background: rgba(255,255,255,0.05); }
+  .pn-ci { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(255,214,0,0.07); }
+  .pn-build { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0,255,204,0.06); }
+  .pn-prod { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(176,84,255,0.08); }
+  .pn-pending { border-color: var(--text-dim); color: var(--text-dim); background: rgba(58,80,104,0.1); opacity: 0.6; }
+
+  /* ═══════════ PERFORMANCE TARGETS ═══════════ */
+  .perf-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+  .perf-card {
+    background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; padding: 18px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .perf-scenario { font-family: var(--font-ui); font-size: 12px; font-weight: 600; color: var(--text-secondary); line-height: 1.3; }
+  .perf-target { font-family: var(--font-display); font-size: 22px; font-weight: 900; }
+  .perf-detail { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); }
+  .perf-status-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .perf-bar { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .perf-bar-fill { height:100%; border-radius:2px; }
+
+  /* ═══════════ TEMP THRESHOLDS ═══════════ */
+  .temp-table { background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+  .tt-header { padding: 14px 20px; background: var(--bg-deep); border-bottom: 1px solid var(--border-dim); font-family: var(--font-display); font-size: 12px; letter-spacing: 3px; color: var(--accent-amber); }
+  .tt-row { display: grid; grid-template-columns: 180px 1fr 120px 80px; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .tt-row:last-child { border-bottom: none; }
+  .tt-cell { padding: 12px 20px; font-family: var(--font-ui); font-size: 13px; border-right: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; }
+  .tt-cell:last-child { border-right: none; }
+  .tt-range { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+  .tt-bar-cell { display: flex; align-items: center; gap: 10px; }
+  .tt-bar { flex:1; height:8px; border-radius:2px; }
+
+  /* ═══════════ VERTICAL BREAKDOWN TABLE ═══════════ */
+  .vt-wrap { background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; overflow:hidden; margin-bottom:24px; }
+  .vt-table { width:100%; border-collapse:collapse; }
+  .vt-table th { background: var(--bg-deep); padding:10px 16px; font-family:var(--font-display); font-size:10px; letter-spacing:3px; color:var(--accent-electric); text-align:left; border-bottom:1px solid var(--border-dim); }
+  .vt-table td { padding:9px 16px; border-bottom:1px solid rgba(255,255,255,0.04); font-family:var(--font-ui); font-size:12px; color:var(--text-secondary); vertical-align:middle; }
+  .vt-table tr:last-child td { border-bottom:none; }
+  .vt-table tr:hover td { background:rgba(0,212,255,0.02); }
+  .vt-phase { font-family:var(--font-display); font-size:10px; font-weight:700; letter-spacing:2px; }
+  .vt-task { color:var(--text-primary); font-weight:600; }
+  .vt-sys { color:var(--text-secondary); font-size:11px; font-family:var(--font-mono); }
+  .vt-wt { font-family:var(--font-display); font-size:13px; font-weight:700; }
+  .vt-pbar-wrap { width:120px; height:6px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .vt-pbar { height:100%; border-radius:2px; width:0%; }
+  .vt-pct { font-family:var(--font-display); font-size:12px; font-weight:700; width:40px; }
+  .vt-status { }
+
+  /* ═══════════ FOOTER ═══════════ */
+  .footer {
+    border-top: 1px solid var(--border-dim); padding-top: 20px; margin-top: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .footer-logo { font-family: var(--font-display); font-size: 14px; font-weight: 900; color: var(--accent-electric); letter-spacing: 4px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-void); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.5); }
+
+  /* Divider */
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-glow), transparent); margin: 24px 0; }
+
+  .full-row { grid-column: 1 / -1; }
+
+  /* Tooltip (simple) */
+  .tooltip { position: relative; }
+  .tooltip-text {
+    display: none; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+    background: var(--bg-card); border: 1px solid var(--border-glow);
+    padding: 6px 10px; border-radius: 3px; white-space: nowrap;
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-primary);
+    z-index: 10; pointer-events: none;
+  }
+  .tooltip:hover .tooltip-text { display: block; }
+
+  .tag-cloud-block { background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 4px; padding: 18px 20px; margin-bottom: 24px; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 2px; font-family: var(--font-mono); font-size: 10px; margin: 3px; border: 1px solid; }
+  .tag-blue { border-color: rgba(0,212,255,0.3); color: var(--accent-electric); background: rgba(0,212,255,0.06); }
+  .tag-green { border-color: rgba(0,255,136,0.3); color: var(--accent-green); background: rgba(0,255,136,0.04); }
+  .tag-gold { border-color: rgba(255,214,0,0.3); color: var(--accent-gold); background: rgba(255,214,0,0.05); }
+  .tag-amber { border-color: rgba(255,152,0,0.3); color: var(--accent-amber); background: rgba(255,152,0,0.05); }
+  .tag-red { border-color: rgba(255,34,68,0.3); color: var(--accent-red); background: rgba(255,34,68,0.06); }
+  .tag-purple { border-color: rgba(176,84,255,0.3); color: var(--accent-purple); background: rgba(176,84,255,0.06); }
+
+  /* horizontal scrollable */
+  .h-scroll { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+<!-- ════════ MASTHEAD ════════ -->
+<div class="masthead">
+  <div class="masthead-grid">
+    <div>
+      <div class="project-title">JETBRAIN</div>
+      <div class="project-subtitle">CORONA CONTROL ULTIMATE — MASTERPLAN KONTROLLPROTOKOLL</div>
+      <div class="doc-meta">
+        <span><span class="label">Version</span><span class="val">V4.0 (PRO-RESET)</span></span>
+        <span><span class="label">Datum</span><span class="val">2026-03-20</span></span>
+        <span><span class="label">Plattform</span><span class="val">Cloud-Only · CodeAnywhere</span></span>
+        <span><span class="label">Sprachen</span><span class="val">TypeScript / Python / GLSL</span></span>
+        <span><span class="label" style="color:var(--accent-red);font-weight:bold;">!!! WARNING !!!</span><span class="val" style="color:var(--accent-red);font-weight:bold;">LOCALHOST VERBOTEN (CLOUD-ONLY)</span></span>
+        <span><span class="label">AI-Backend</span><span class="val">FastAPI · PyTorch · LanceDB</span></span>
+        <span><span class="label">3D-Stack</span><span class="val">Three.js (PBR) · R3F · LOD</span></span>
+      </div>
+    </div>
+    <div class="status-badge">
+      <div class="badge badge-info"><span class="pulse"></span>IN AUSFÜHRUNG (PHASE 4)</div>
+      <div class="badge badge-warn">⚠ HOME-PC: CLOUD-SAFE</div>
+      <div class="badge badge-info">☁ CLOUD-ONLY MODUS</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ HARDWARE ALERT ════════ -->
+<div class="hw-alert">
+  <div class="alert-box danger">
+    <div class="alert-title">⚠ HOME-PC — KRITISCHE TEMPERATUREN</div>
+    <div class="temp-grid">
+      <div class="temp-item">
+        <div class="temp-label">CPU-TEMPERATUR</div>
+        <div class="temp-value safe">42°C</div>
+        <div style="margin-top:6px;">
+          <div class="temp-bar-wrap"><div class="temp-bar ok" style="width:42%;"></div></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--accent-green);margin-top:3px;text-align:right;">NORMAL (CLOUD-OPS)</div>
+        </div>
+      </div>
+      <div class="temp-item">
+        <div class="temp-label">GPU-TEMPERATUR</div>
+        <div class="temp-value safe">38°C</div>
+        <div style="margin-top:6px;">
+          <div class="temp-bar-wrap"><div class="temp-bar ok" style="width:38%;"></div></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--accent-green);margin-top:3px;text-align:right;">IDLE (OFFLOADED)</div>
+        </div>
+      </div>
+    </div>
+    <ul class="rule-list">
+      <li><span class="icon-x">✗</span>KEINE lokale Entwicklung erlaubt</li>
+      <li><span class="icon-x">✗</span>KEINE Build-Prozesse auf Home-PC</li>
+      <li><span class="icon-x">✗</span>KEINE npm/node Installs lokal</li>
+      <li><span class="icon-x">✗</span>KEIN lokales Rendering/Testing</li>
+    </ul>
+  </div>
+  <div class="alert-box safe">
+    <div class="alert-title">✓ CLOUD-LÖSUNG — ZERO HOME-PC FOOTPRINT</div>
+    <div class="temp-grid">
+      <div class="temp-item">
+        <div class="temp-label">HOME-PC CPU-ZIEL</div>
+        <div class="temp-value safe">&lt;50°C</div>
+        <div style="margin-top:6px;">
+          <div class="temp-bar-wrap"><div class="temp-bar ok"></div></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--accent-green);margin-top:3px;text-align:right;">NUR BROWSER-TAB: &lt;1% CPU</div>
+        </div>
+      </div>
+      <div class="temp-item">
+        <div class="temp-label">HOME-PC GPU-ZIEL</div>
+        <div class="temp-value safe">0%</div>
+        <div style="margin-top:6px;">
+          <div class="temp-bar-wrap"><div class="temp-bar ok" style="width:2%;"></div></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--accent-green);margin-top:3px;text-align:right;">CLOUD GPU-RENDERING AKTIV</div>
+        </div>
+      </div>
+    </div>
+    <ul class="rule-list">
+      <li><span class="icon-ok">✓</span>100% Cloud-Entwicklung (CodeAnywhere)</li>
+      <li><span class="icon-ok">✓</span>Git-Repository auf GitHub</li>
+      <li><span class="icon-ok">✓</span>Home-PC: NUR Browser-Zugriff</li>
+      <li><span class="icon-ok">✓</span>RAM-Last: &lt;200MB — Temp: garantiert &lt;50°C</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════ GESAMTFORTSCHRITT ════════ -->
+<div class="total-progress">
+  <div class="total-header">
+    <div>
+      <div class="total-label">GESAMT-PROJEKTFORTSCHRITT</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:4px;">6 PHASEN · 10 WOCHEN ROADMAP · 111 TESTS TOTAL</div>
+    </div>
+    <div>
+      <div class="total-pct-big started">60%</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--accent-electric);text-align:right;margin-top:4px;">STATUS: PHASE 4 STARTBEREIT</div>
+    </div>
+  </div>
+  <div class="mega-bar">
+    <div class="mega-bar-fill" style="width:60%;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:4px;">
+    <span>START</span><span>WOCHE 2</span><span>WOCHE 4</span><span>WOCHE 6</span><span>WOCHE 8</span><span>WOCHE 10 — PRODUCTION</span>
+  </div>
+  <div class="phase-bars-grid" style="margin-top:16px;">
+    <div class="mini-phase-bar">
+      <div class="mpb-label">PH.1 · CLOUD-SETUP</div>
+      <div class="mpb-track"><div class="mpb-fill" style="background:var(--accent-electric);width:100%;"></div></div>
+      <div class="mpb-pct" style="color:var(--accent-electric);">100% <span style="color:var(--text-dim);font-size:9px;">/ 15% Gewicht</span></div>
+    </div>
+    <div class="mini-phase-bar">
+      <div class="mpb-label">PH.2 · 3D-CORE</div>
+      <div class="mpb-track"><div class="mpb-fill" style="background:var(--accent-cyan);width:100%;"></div></div>
+      <div class="mpb-pct" style="color:var(--accent-cyan);">100% <span style="color:var(--text-dim);font-size:9px;">/ 20% Gewicht</span></div>
+    </div>
+    <div class="mini-phase-bar">
+      <div class="mpb-label">PH.3 · AI-LOGIC</div>
+      <div class="mpb-track"><div class="mpb-fill" style="background:var(--accent-gold);width:100%;"></div></div>
+      <div class="mpb-pct" style="color:var(--accent-gold);">100% <span style="color:var(--text-dim);font-size:9px;">/ 25% Gewicht</span></div>
+    </div>
+    <div class="mini-phase-bar">
+      <div class="mpb-label">PH.4 · HYPER-AAA</div>
+      <div class="mpb-track"><div class="mpb-fill" style="background:var(--accent-amber);width:0%;"></div></div>
+      <div class="mpb-pct" style="color:var(--accent-amber);">0% <span style="color:var(--text-dim);font-size:9px;">/ 30% Gewicht</span></div>
+    </div>
+    <div class="mini-phase-bar">
+      <div class="mpb-label">PH.5 · UI/GAMEPLAY</div>
+      <div class="mpb-track"><div class="mpb-fill" style="background:var(--accent-purple);width:0%;"></div></div>
+      <div class="mpb-pct" style="color:var(--accent-purple);">0% <span style="color:var(--text-dim);font-size:9px;">/ 20% Gewicht</span></div>
+    </div>
+    <div class="mini-phase-bar">
+      <div class="mpb-label">PH.6 · QA/DEPLOY</div>
+      <div class="mpb-track"><div class="mpb-fill" style="background:var(--accent-green);width:0%;"></div></div>
+      <div class="mpb-pct" style="color:var(--accent-green);">0% <span style="color:var(--text-dim);font-size:9px;">/ Bonus</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ HORIZONTALE PHASEN-TIMELINE ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 01</span>
+    <span class="section-title">HORIZONTALE PHASEN-ÜBERSICHT · ROADMAP</span>
+    <span class="section-pct">6 PHASEN</span>
+  </div>
+  <div class="phase-timeline">
+    <div class="timeline-track">
+      <div class="phase-node">
+        <div class="phase-circle ph1">
+          <span class="phase-num">01</span>
+          <span>CLOUD</span>
+        </div>
+        <div class="phase-node-label">Cloud-Setup &amp;<br>Initialisierung</div>
+        <div class="phase-node-wt">Woche 1</div>
+        <div class="phase-node-pct">15%</div>
+        <span class="status-chip chip-done">✓ ERLEDIGT</span>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle ph2">
+          <span class="phase-num">02</span>
+          <span>3D-CORE</span>
+        </div>
+        <div class="phase-node-label">3D Core Architektur &amp;<br>PBR Pipeline</div>
+        <div class="phase-node-wt">Woche 2–3</div>
+        <div class="phase-node-pct">20%</div>
+        <span class="status-chip chip-done">✓ ERLEDIGT</span>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle ph3">
+          <span class="phase-num">03</span>
+          <span>AI-LOOP</span>
+        </div>
+        <div class="phase-node-label">AI Engine &amp;<br>Python Brain Logic</div>
+        <div class="phase-node-wt">Woche 4–5</div>
+        <div class="phase-node-pct">25%</div>
+        <span class="status-chip chip-done">✓ ERLEDIGT</span>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle ph4">
+          <span class="phase-num">04</span>
+          <span>GRAFIK</span>
+        </div>
+        <div class="phase-node-label">Hyper-AAA Grafik<br>200k+ Poly NPC</div>
+        <div class="phase-node-wt">Woche 6–8</div>
+        <div class="phase-node-pct">30%</div>
+        <span class="status-chip chip-pending">⊙ OFFEN</span>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle ph5">
+          <span class="phase-num">05</span>
+          <span>UI/UX</span>
+        </div>
+        <div class="phase-node-label">Gameplay &amp;<br>UI-Polishing</div>
+        <div class="phase-node-wt">Woche 9–10</div>
+        <div class="phase-node-pct">20%</div>
+        <span class="status-chip chip-pending">⊙ OFFEN</span>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle ph6">
+          <span class="phase-num">06</span>
+          <span>DEPLOY</span>
+        </div>
+        <div class="phase-node-label">QA-Testing &amp;<br>Deployment</div>
+        <div class="phase-node-wt">Woche 10+</div>
+        <div class="phase-node-pct">BONUS</div>
+        <span class="status-chip chip-pending">⊙ OFFEN</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ VERTIKALE DETAILAUFSCHLÜSSELUNG ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 02</span>
+    <span class="section-title">VERTIKALE DETAILAUFSCHLÜSSELUNG · ALLE PHASEN · ALLE SCHRITTE · ALLE GEWICHTE</span>
+    <span class="section-pct">110%</span>
+  </div>
+  <div class="vt-wrap h-scroll">
+    <table class="vt-table">
+      <thead>
+        <tr>
+          <th>PHASE</th>
+          <th>AUFGABE / SYSTEM</th>
+          <th>SUBSYSTEM / DATEI</th>
+          <th>GEWICHT</th>
+          <th>FORTSCHRITT</th>
+          <th>%</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Phase 1 -->
+        <tr><td colspan="7" style="background:rgba(0,212,255,0.04);padding:8px 16px;font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-electric);border-bottom:1px solid var(--border-dim);">PHASE 1 — CLOUD-SETUP &amp; PROJEKT-INITIALISIERUNG · WOCHE 1 · GEWICHT: 15% GESAMT</td></tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">CodeAnywhere Cloud IDE Setup</span></td>
+          <td><span class="vt-sys">cloud.codeanywhere.com · Terminal</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">3%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">GitHub Repository klonen &amp; initialisieren</span></td>
+          <td><span class="vt-sys">git clone · .gitignore · Initial Commit</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">3%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">Ordnerstruktur erstellen (src, docs, public)</span></td>
+          <td><span class="vt-sys">src/{3d,managers,systems,stores,types,assets}</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">2%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">Vite + React Projekt initialisieren</span></td>
+          <td><span class="vt-sys">create-vite · react-ts · V4 Pivot</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">3%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">Dependencies installieren (R3F, Three.js, Zustand)</span></td>
+          <td><span class="vt-sys">three@0.170.0 · @react-three/fiber · zustand@5+</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">2%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">TypeScript Strict Mode konfigurieren</span></td>
+          <td><span class="vt-sys">tsconfig.json · noImplicitAny · strictNullChecks</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">1%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-electric);">PH.1</span></td>
+          <td><span class="vt-task">Erste Test-App + Web-Preview verifizieren</span></td>
+          <td><span class="vt-sys">src/App.tsx · npm start · Cloud Preview OK</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-electric);">1%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-electric);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-electric);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+
+        <!-- Phase 2 -->
+        <tr><td colspan="7" style="background:rgba(0,255,204,0.04);padding:8px 16px;font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-cyan);border-bottom:1px solid var(--border-dim);">PHASE 2 — 3D-GRUNDLAGEN &amp; REACT THREE FIBER INTEGRATION · WOCHE 2-3 · GEWICHT: 20% GESAMT</td></tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-cyan);">PH.2</span></td>
+          <td><span class="vt-task">R3F Canvas PBR Setup (Metallic/EnvMap)</span></td>
+          <td><span class="vt-sys">App.tsx · Canvas · Stage · Environment</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-cyan);">5%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-cyan);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-cyan);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-cyan);">PH.2</span></td>
+          <td><span class="vt-task">Custom GLSL Floor Shader (Grid)</span></td>
+          <td><span class="vt-sys">ShaderMaterial · gridVertex · gridFragment</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-cyan);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-cyan);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-cyan);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-cyan);">PH.2</span></td>
+          <td><span class="vt-task">AAA Mesh Rendering (PBR Sphere)</span></td>
+          <td><span class="vt-sys">meshStandardMaterial · roughness/metalness · 60 FPS</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-cyan);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-cyan);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-cyan);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-cyan);">PH.2</span></td>
+          <td><span class="vt-task">Kamera-System (Third-Person / Orbit)</span></td>
+          <td><span class="vt-sys">OrbitControls · makeDefault · Auto-Rotate</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-cyan);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-cyan);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-cyan);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-cyan);">PH.2</span></td>
+          <td><span class="vt-task">Beleuchtung &amp; Post-Processing Setup</span></td>
+          <td><span class="vt-sys">directionalLight · ambientLight · shadow-mapSize</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-cyan);">3%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-cyan);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-cyan);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+
+        <!-- Phase 3 -->
+        <tr><td colspan="7" style="background:rgba(255,214,0,0.04);padding:8px 16px;font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-gold);border-bottom:1px solid var(--border-dim);">PHASE 3 — 24H EVENT-SYSTEM KERN-LOGIK · WOCHE 4-5 · GEWICHT: 25% GESAMT</td></tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-gold);">PH.3</span></td>
+          <td><span class="vt-task">Python Brain Service (FastAPI)</span></td>
+          <td><span class="vt-sys">ai_engine/main.py · uvicorn · brain logic</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-gold);">5%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-gold);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-gold);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-gold);">PH.3</span></td>
+          <td><span class="vt-task">Node.js AI Relay Service</span></td>
+          <td><span class="vt-sys">backend/src/index.ts · axios AI call</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-gold);">5%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-gold);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-gold);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-gold);">PH.3</span></td>
+          <td><span class="vt-task">Socket.IO Realtime-Kommunikation</span></td>
+          <td><span class="vt-sys">backend/src/index.ts · socket.emit('ai_action')</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-gold);">3%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-gold);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-gold);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-gold);">PH.3</span></td>
+          <td><span class="vt-task">Singleton Socket Manager (Frontend)</span></td>
+          <td><span class="vt-sys">frontend/src/App.tsx · socketInstance</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-gold);">6%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-gold);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-gold);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-gold);">PH.3</span></td>
+          <td><span class="vt-task">AI Action Verification ('WANDER')</span></td>
+          <td><span class="vt-sys">verify_ai_loop.ts · end-to-end status OK</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-gold);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-gold);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-gold);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-gold);">PH.3</span></td>
+          <td><span class="vt-task">AI Feedback HUD Integration</span></td>
+          <td><span class="vt-sys">frontend/src/App.tsx · AI Action HUD</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-gold);">2%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-gold);width:100%;"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-gold);">100%</span></td>
+          <td><span class="status-chip chip-done">ERLEDIGT</span></td>
+        </tr>
+
+        <!-- Phase 4 -->
+        <tr><td colspan="7" style="background:rgba(255,152,0,0.04);padding:8px 16px;font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-amber);border-bottom:1px solid var(--border-dim);">PHASE 4 — HYPER-AAA GRAFIK-UPGRADE · WOCHE 6-8 · GEWICHT: 30% GESAMT</td></tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-amber);">PH.4</span></td>
+          <td><span class="vt-task">High-Poly NPC LOD-0 Mesh (200k+ Polygone)</span></td>
+          <td><span class="vt-sys">ProceduralHumanMesh.generateLOD0() · Gesicht 45k · Hände 24k · Körper 131k</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-amber);">8%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-amber);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-amber);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-amber);">PH.4</span></td>
+          <td><span class="vt-task">Polygon-Counter &amp; Validator (countPolygons())</span></td>
+          <td><span class="vt-sys">PolygonValidator.ts · BufferGeometry · index.count/3</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-amber);">2%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-amber);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-amber);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-amber);">PH.4</span></td>
+          <td><span class="vt-task">PBR-Material-System (6 Texture-Maps pro NPC)</span></td>
+          <td><span class="vt-sys">AAAMaterialSystem.ts · BaseColor 4K · Normal 4K · SSS 2K · AO 2K · Emissive 1K</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-amber);">6%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-amber);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-amber);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-amber);">PH.4</span></td>
+          <td><span class="vt-task">LOD-System (5 Stufen: 0m→200k bis &gt;100m→500 Poly)</span></td>
+          <td><span class="vt-sys">LODManager.ts · THREE.LOD · addLevel() · Auto-Switch</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-amber);">5%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-amber);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-amber);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-amber);">PH.4</span></td>
+          <td><span class="vt-task">Stephansdom Hero-Asset (750k+ Polygone, 8K Textur)</span></td>
+          <td><span class="vt-sys">StephansdomBuilder.ts · GothicTower · ZigZagRoof · Facade</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-amber);">5%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-amber);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-amber);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-amber);">PH.4</span></td>
+          <td><span class="vt-task">Alle 16 NPC-Typen mit 200k+ Poly erstellen</span></td>
+          <td><span class="vt-sys">Police/RiotPolice/SEK/Demo/Krause/Civilian/... (16 total)</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-amber);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-amber);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-amber);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+
+        <!-- Phase 5 -->
+        <tr><td colspan="7" style="background:rgba(176,84,255,0.04);padding:8px 16px;font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-purple);border-bottom:1px solid var(--border-dim);">PHASE 5 — GAMEPLAY &amp; UI-POLISHING · WOCHE 9-10 · GEWICHT: 20% GESAMT</td></tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-purple);">PH.5</span></td>
+          <td><span class="vt-task">TelemetryHUD (Zeit, FPS, Eskalation, NPC-Count)</span></td>
+          <td><span class="vt-sys">TelemetryHUD.tsx · usePerformanceMonitor · Eskalations-Bar</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-purple);">5%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-purple);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-purple);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-purple);">PH.5</span></td>
+          <td><span class="vt-task">Minimap (Stephansplatz Top-Down, NPC-Dots)</span></td>
+          <td><span class="vt-sys">MinimapSystem.tsx · Canvas2D · Zoom-Funktion · M-Taste</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-purple);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-purple);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-purple);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-purple);">PH.5</span></td>
+          <td><span class="vt-task">Dialog-System (E-Taste, 5 Verzweigungen mit Krause)</span></td>
+          <td><span class="vt-sys">DialogSystem.tsx · DialogTree · NPC-Interaktion · Deeskalation</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-purple);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-purple);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-purple);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-purple);">PH.5</span></td>
+          <td><span class="vt-task">Taktik-Menü (C-Taste, 4 Entscheidungsoptionen)</span></td>
+          <td><span class="vt-sys">TacticsMenu.tsx · Option A/B/C/D · Eskalations-Konsequenzen</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-purple);">4%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-purple);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-purple);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-purple);">PH.5</span></td>
+          <td><span class="vt-task">Squad-System (1-9 Tasten, Einheiten-Auswahl)</span></td>
+          <td><span class="vt-sys">SquadManager.ts · 9 Polizei-Einheiten · Touch-Groups</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-purple);">3%</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-purple);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-purple);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+
+        <!-- Phase 6 -->
+        <tr><td colspan="7" style="background:rgba(0,255,136,0.04);padding:8px 16px;font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-green);border-bottom:1px solid var(--border-dim);">PHASE 6 — QA-TESTING &amp; DEPLOYMENT · WOCHE 10+ · BONUS-PHASE</td></tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-green);">PH.6</span></td>
+          <td><span class="vt-task">Vitest Unit-Tests (111 Tests grün)</span></td>
+          <td><span class="vt-sys">*.test.ts · 100% Coverage · 0 Failures Target</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-green);">BONUS</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-green);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-green);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-green);">PH.6</span></td>
+          <td><span class="vt-task">ESLint &amp; TypeScript Validation (0 Errors, 0 Warnings)</span></td>
+          <td><span class="vt-sys">.eslintrc · strict: true · noImplicitAny · Zero any</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-green);">BONUS</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-green);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-green);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-green);">PH.6</span></td>
+          <td><span class="vt-task">Production Build (Expo/Vite) + GitHub Actions CI/CD</span></td>
+          <td><span class="vt-sys">.github/workflows/ci.yml · Build · Deploy · Vercel/Netlify</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-green);">BONUS</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-green);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-green);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+        <tr>
+          <td><span class="vt-phase" style="color:var(--accent-green);">PH.6</span></td>
+          <td><span class="vt-task">Live-URL Deployment (kein 404, alle Assets geladen)</span></td>
+          <td><span class="vt-sys">Production Hosting · Domain · SSL · CDN · Asset-Verification</span></td>
+          <td><span class="vt-wt" style="color:var(--accent-green);">BONUS</span></td>
+          <td><div class="vt-pbar-wrap"><div class="vt-pbar" style="background:var(--accent-green);"></div></div></td>
+          <td><span class="vt-pct" style="color:var(--accent-green);">0%</span></td>
+          <td><span class="status-chip chip-pending">OFFEN</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════ PHASE DETAIL CARDS (HORIZONTAL × VERTIKAL) ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 03</span>
+    <span class="section-title">PHASEN-DETAILKARTEN · HORIZONTAL &amp; VERTIKAL · FORTSCHRITTS-MATRIZEN</span>
+    <span class="section-pct">30 PUNKTE</span>
+  </div>
+  <div class="phase-grid">
+
+    <!-- Phase 1 Card -->
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <div class="phase-icon ph1">01</div>
+        <div class="phase-card-meta">
+          <div class="phase-card-name" style="color:var(--accent-electric);">CLOUD-SETUP</div>
+          <div class="phase-card-week">Woche 1 · 7 Aufgaben · 4 Deliverables</div>
+          <div style="margin-top:6px;"><span class="status-chip chip-done">ABGESCHLOSSEN</span></div>
+        </div>
+        <div class="phase-card-weight" style="color:var(--accent-electric);">15%</div>
+      </div>
+      <div class="phase-card-body">
+        <div class="progress-row"><span class="pr-label">1.1 CodeAnywhere Setup</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">1.2 Git Repo Init</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">1.3 Vite Setup (V4 Pivot)</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">1.4 Dependencies</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">1.5 TypeScript Config</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">1.6 Test-App + Preview</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">1.7 Temp-Verifikation</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-electric);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-electric);">100%</span></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-dim);">
+          <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:6px;"><span>PHASEN-GESAMT</span><span style="color:var(--accent-electric);font-weight:700;">7 / 7 erledigt</span></div>
+          <div class="pr-bar" style="height:8px;"><div class="pr-fill" style="background:var(--accent-electric);width:100%;height:100%;border-radius:2px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 Card -->
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <div class="phase-icon ph2">02</div>
+        <div class="phase-card-meta">
+          <div class="phase-card-name" style="color:var(--accent-cyan);">3D-CORE</div>
+          <div class="phase-card-week">Woche 2–3 · 5 Aufgaben · 4 Deliverables</div>
+          <div style="margin-top:6px;"><span class="status-chip chip-done">ABGESCHLOSSEN</span></div>
+        </div>
+        <div class="phase-card-weight" style="color:var(--accent-cyan);">20%</div>
+      </div>
+      <div class="phase-card-body">
+        <div class="progress-row"><span class="pr-label">2.1 R3F PBR Setup</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-cyan);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-cyan);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">2.2 GLSL Floor Shader</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-cyan);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-cyan);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">2.3 High-Perf Rendering</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-cyan);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-cyan);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">2.4 Kamera-Controller</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-cyan);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-cyan);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">2.5 EnvMap &amp; Lighting</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-cyan);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-cyan);">100%</span></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-dim);">
+          <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:6px;"><span>PHASEN-GESAMT</span><span style="color:var(--accent-cyan);font-weight:700;">5 / 5 erledigt</span></div>
+          <div class="pr-bar" style="height:8px;"><div class="pr-fill" style="background:var(--accent-cyan);width:100%;height:100%;border-radius:2px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 Card -->
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <div class="phase-icon ph3">03</div>
+        <div class="phase-card-meta">
+          <div class="phase-card-name" style="color:var(--accent-gold);">AI-BRAIN-LOOP</div>
+          <div class="phase-card-week">Woche 4–5 · 6 Aufgaben · End-to-End Loop verifiziert</div>
+          <div style="margin-top:6px;"><span class="status-chip chip-done">ABGESCHLOSSEN</span></div>
+        </div>
+        <div class="phase-card-weight" style="color:var(--accent-gold);">25%</div>
+      </div>
+      <div class="phase-card-body">
+        <div class="progress-row"><span class="pr-label">3.1 Python Brain Service</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-gold);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-gold);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">3.2 FastAPI AI Engine</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-gold);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-gold);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">3.3 Node.js Relay Logic</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-gold);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-gold);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">3.4 Socket.IO Realtime</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-gold);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-gold);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">3.5 Action Dispatcher</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-gold);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-gold);">100%</span></div>
+        <div class="progress-row"><span class="pr-label">3.6 AI State HUD</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-gold);width:100%;"></div></div><span class="pr-pct" style="color:var(--accent-gold);">100%</span></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-dim);">
+          <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:6px;"><span>PHASEN-GESAMT</span><span style="color:var(--accent-gold);font-weight:700;">6 / 6 erledigt</span></div>
+          <div class="pr-bar" style="height:8px;"><div class="pr-fill" style="background:var(--accent-gold);width:100%;height:100%;border-radius:2px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 Card -->
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <div class="phase-icon ph4">04</div>
+        <div class="phase-card-meta">
+          <div class="phase-card-name" style="color:var(--accent-amber);">HYPER-AAA GRAFIK</div>
+          <div class="phase-card-week">Woche 6–8 · 6 Aufgaben · 16 NPC-Typen</div>
+          <div style="margin-top:6px;"><span class="status-chip chip-pending">NICHT GESTARTET</span></div>
+        </div>
+        <div class="phase-card-weight" style="color:var(--accent-amber);">30%</div>
+      </div>
+      <div class="phase-card-body">
+        <div class="progress-row"><span class="pr-label">4.1 LOD-0 NPC Mesh 200k</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-amber);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-amber);">0%</span></div>
+        <div class="progress-row"><span class="pr-label">4.2 Polygon-Validator</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-amber);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-amber);">0%</span></div>
+        <div class="progress-row"><span class="pr-label">4.3 PBR-Material (6-Map)</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-amber);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-amber);">0%</span></div>
+        <div class="progress-row"><span class="pr-label">4.4 LOD-System 5 Stufen</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-amber);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-amber);">0%</span></div>
+        <div class="progress-row"><span class="pr-label">4.5 Stephansdom 750k</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-amber);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-amber);">0%</span></div>
+        <div class="progress-row"><span class="pr-label">4.6 Alle 16 NPC-Typen</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-amber);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-amber);">0%</span></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-dim);">
+          <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:6px;"><span>PHASEN-GESAMT</span><span style="color:var(--accent-amber);font-weight:700;">0 / 6 erledigt</span></div>
+          <div class="pr-bar" style="height:8px;"><div class="pr-fill" style="background:var(--accent-amber);width:0%;height:100%;border-radius:2px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 + 6 Full Width -->
+    <div class="phase-card phase-card-full">
+      <div class="phase-card-header">
+        <div class="phase-icon ph5">05</div>
+        <div class="phase-card-meta">
+          <div class="phase-card-name" style="color:var(--accent-purple);">GAMEPLAY &amp; UI-POLISHING</div>
+          <div class="phase-card-week">Woche 9–10 · 5 Aufgaben · HUD + Dialog + Taktik + Squad</div>
+          <div style="margin-top:6px;"><span class="status-chip chip-pending">NICHT GESTARTET</span></div>
+        </div>
+        <div class="phase-card-weight" style="color:var(--accent-purple);">20%</div>
+      </div>
+      <div class="phase-card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <div class="progress-row"><span class="pr-label">5.1 TelemetryHUD</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-purple);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-purple);">0%</span></div>
+          <div class="progress-row"><span class="pr-label">5.2 Minimap</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-purple);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-purple);">0%</span></div>
+          <div class="progress-row"><span class="pr-label">5.3 Dialog-System</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-purple);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-purple);">0%</span></div>
+        </div>
+        <div>
+          <div class="progress-row"><span class="pr-label">5.4 Taktik-Menü</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-purple);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-purple);">0%</span></div>
+          <div class="progress-row"><span class="pr-label">5.5 Squad-System</span><div class="pr-bar"><div class="pr-fill" style="background:var(--accent-purple);width:0%;"></div></div><span class="pr-pct" style="color:var(--accent-purple);">0%</span></div>
+          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-dim);">
+            <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-bottom:6px;"><span>PHASEN-GESAMT</span><span style="color:var(--accent-purple);font-weight:700;">0 / 5 erledigt</span></div>
+            <div class="pr-bar" style="height:8px;"><div class="pr-fill" style="background:var(--accent-purple);width:0%;height:100%;border-radius:2px;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ 24H EVENT TIMELINE ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 04</span>
+    <span class="section-title">24H EVENT-TIMELINE · VOLLSTÄNDIGE ESKALATIONSMATRIX · STEPHANSPLATZ WIEN</span>
+    <span class="section-pct">40+ EVENTS</span>
+  </div>
+  <div class="event-timeline">
+    <div class="etl-header">
+      <span>ZEITPLAN 17. MÄRZ 2021 · 06:00 – 06:00 (NEXT DAY) · ECHTZEIT-SIMULATION · 24 MIN = 24 SPIELSTUNDEN</span>
+      <span class="status-chip chip-pending">NICHT IMPLEMENTIERT</span>
+    </div>
+    <!-- Col headers -->
+    <div class="etl-row" style="background:var(--bg-deep);border-bottom:1px solid var(--border-dim);">
+      <div class="etl-cell" style="font-family:var(--font-display);font-size:9px;color:var(--text-dim);letter-spacing:2px;">ZEIT</div>
+      <div class="etl-cell" style="font-family:var(--font-display);font-size:9px;color:var(--text-dim);letter-spacing:2px;">EVENT</div>
+      <div class="etl-cell" style="font-family:var(--font-display);font-size:9px;color:var(--text-dim);letter-spacing:2px;">ESKALATION</div>
+      <div class="etl-cell" style="font-family:var(--font-display);font-size:9px;color:var(--text-dim);letter-spacing:2px;">AKTEURE</div>
+      <div class="etl-cell" style="font-family:var(--font-display);font-size:9px;color:var(--text-dim);letter-spacing:2px;">STATUS</div>
+    </div>
+    <!-- Events -->
+    <div class="etl-row"><div class="etl-cell etl-time">06:00</div><div class="etl-cell etl-event">Stadt erwacht — Normalzustand</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill esk-0" style="width:0%;"></div></div><span class="etl-pct-val" style="color:var(--accent-green);">0%</span></div><div class="etl-cell etl-actors">50 Zivilisten · Stephansplatz</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">08:00</div><div class="etl-cell etl-event">Demo-Vorbereitung beginnt</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:5%;background:#44dd88;"></div></div><span class="etl-pct-val" style="color:#44dd88;">5%</span></div><div class="etl-cell etl-actors">10 Demonstranten · Bühne aufbauen</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">08:45</div><div class="etl-cell etl-event">Schilder werden verteilt</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:10%;background:#88cc44;"></div></div><span class="etl-pct-val" style="color:#88cc44;">10%</span></div><div class="etl-cell etl-actors">50 Demonstranten · Mesh-Spawns</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">10:00</div><div class="etl-cell etl-event">Massen-Zustrom — Platz füllt sich</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:15%;background:#aacc00;"></div></div><span class="etl-pct-val" style="color:#aacc00;">15%</span></div><div class="etl-cell etl-actors">150 Demonstranten · NPCManager.spawnGroup()</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">11:00</div><div class="etl-cell etl-event">Hauptredner Rede — Bühne aktiv</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:15%;background:#aacc00;"></div></div><span class="etl-pct-val" style="color:#aacc00;">15%</span></div><div class="etl-cell etl-actors">Redner NPC + 150 Crowd · Audio</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">11:30</div><div class="etl-cell etl-event">Aggressive Rhetorik eskaliert</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:25%;background:#ddaa00;"></div></div><span class="etl-pct-val" style="color:#ddaa00;">25%</span></div><div class="etl-cell etl-actors">Aktivist NPC · wütende Crowd-Reaktion</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,152,0,0.04);"><div class="etl-cell etl-time" style="color:var(--accent-amber);">12:00</div><div class="etl-cell etl-event" style="color:var(--accent-amber);font-weight:700;">⚠ POLIZEI-ULTIMATUM (Kritisch!)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:45%;background:#ff8800;"></div></div><span class="etl-pct-val" style="color:#ff8800;">45%</span></div><div class="etl-cell etl-actors">Polizei-Chef NPC + 200 Crowd · Megafon</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,100,0,0.03);"><div class="etl-cell etl-time" style="color:var(--accent-red);">12:04</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">🔥 ERSTE FLASCHENWÜRFE</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:50%;background:#ff6600;"></div></div><span class="etl-pct-val" style="color:#ff6600;">50%</span></div><div class="etl-cell etl-actors">Aggressive Demonstranten · throwObjectProbability</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,60,0,0.04);"><div class="etl-cell etl-time" style="color:var(--accent-red);">12:15</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">💥 ERSTE GEWALT (Nahkampf)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:60%;background:#ff4400;"></div></div><span class="etl-pct-val" style="color:#ff4400;">60%</span></div><div class="etl-cell etl-actors">30 Demo vs 30 Cops · attack_swing Animation</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,30,0,0.04);"><div class="etl-cell etl-time" style="color:var(--accent-red);">12:30</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">🚔 HUNDERTSCHAFT RÜCKT AN</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:70%;background:#ff2200;"></div></div><span class="etl-pct-val" style="color:#ff2200;">70%</span></div><div class="etl-cell etl-actors">100 RIOT_POLICE NPCs · Formation</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">13:00</div><div class="etl-cell etl-event">💧 WASSERWERFER-EINSATZ</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:65%;background:#ff3300;"></div></div><span class="etl-pct-val" style="color:#ff3300;">65%</span></div><div class="etl-cell etl-actors">WATER_CANNON_OPERATOR + Fahrzeug-Mesh</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">13:30</div><div class="etl-cell etl-event">☁ TRÄNENGAS-ANGRIFF</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:50%;background:#ff6600;"></div></div><span class="etl-pct-val" style="color:#ff6600;">50%</span></div><div class="etl-cell etl-actors">Chemical-Unit · tearGasExposure +15%</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">14:00</div><div class="etl-cell etl-event">POLIZEI-VORSTOSS (Brutal)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:40%;background:#ddaa00;"></div></div><span class="etl-pct-val" style="color:#ddaa00;">40%</span></div><div class="etl-cell etl-actors">Hundertschaft + 50 Demo · Räumung</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">15:00</div><div class="etl-cell etl-event">Ruhe vor dem Sturm</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:30%;background:#88cc44;"></div></div><span class="etl-pct-val" style="color:#88cc44;">30%</span></div><div class="etl-cell etl-actors">Sanitäter NPCs · Aufräum-Teams · MEDIC</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,100,0,0.04);"><div class="etl-cell etl-time" style="color:var(--accent-amber);">18:00</div><div class="etl-cell etl-event" style="color:var(--accent-amber);font-weight:700;">EXTREMISTEN sammeln (Dämmerung)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:50%;background:#ff6600;"></div></div><span class="etl-pct-val" style="color:#ff6600;">50%</span></div><div class="etl-cell etl-actors">50 Black-Bloc NPCs · EXTREMIST-Typ</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,20,0,0.05);"><div class="etl-cell etl-time" style="color:var(--accent-red);">19:00</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">⚡ MOB-ANGRIFF (Eisenstangen)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:80%;background:#ff1100;"></div></div><span class="etl-pct-val" style="color:#ff1100;">80%</span></div><div class="etl-cell etl-actors">50 Extremisten vs 30 Cops · attackProbability 0.8</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,10,0,0.05);"><div class="etl-cell etl-time" style="color:var(--accent-red);">19:30</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">🔥 BENGALO-INFERNO</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:85%;background:#ff0800;"></div></div><span class="etl-pct-val" style="color:#ff0800;">85%</span></div><div class="etl-cell etl-actors">Mob Pyro-Unit · Partikel-System</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,5,0,0.05);"><div class="etl-cell etl-time" style="color:var(--accent-red);">20:00</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">🚗 BARRIKADEN &amp; AUTO-BRÄNDE</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:90%;background:#ff0044;"></div></div><span class="etl-pct-val" style="color:#ff0044;">90%</span></div><div class="etl-cell etl-actors">Mob Barrikaden-Bau · Fahrzeug-Meshes</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,0,80,0.05);"><div class="etl-cell etl-time" style="color:var(--accent-red);">20:30</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:700;">🚨 SEK-ANKUNFT (Elite)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:95%;background:#ee0055;"></div></div><span class="etl-pct-val" style="color:#ee0055;">95%</span></div><div class="etl-cell etl-actors">50 SEK-Elite NPCs · SEK-Typ · FEARFUL-Zustand bei Crowd</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row" style="background:rgba(255,0,40,0.07);border:1px solid rgba(255,34,68,0.2);"><div class="etl-cell etl-time" style="color:var(--accent-red);font-weight:900;font-size:14px;text-shadow:0 0 10px rgba(255,34,68,0.8);">21:00</div><div class="etl-cell etl-event" style="color:var(--accent-red);font-weight:900;font-size:14px;letter-spacing:2px;text-shadow:0 0 8px rgba(255,34,68,0.6);">☠ PEAK CHAOS — SCHUSSWECHSEL (100%)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap" style="height:10px;"><div class="etl-bar-fill esk-100" style="width:100%;"></div></div><span class="etl-pct-val" style="color:var(--accent-red);font-size:14px;font-weight:900;">100%</span></div><div class="etl-cell etl-actors" style="color:var(--accent-red);">50 Extremisten vs 100 Cops + SEK · Schussgeräusche · Blendgranaten · Rauch</div><div class="etl-status-cell"><span class="status-chip chip-block">KRITISCH</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">21:30</div><div class="etl-cell etl-event">Mob-Rückzug (Kanalisation)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:70%;background:#ff2200;"></div></div><span class="etl-pct-val" style="color:#ff2200;">70%</span></div><div class="etl-cell etl-actors">Flüchtende Extremisten · PANICKED-Zustand</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">22:00</div><div class="etl-cell etl-event">Aufräumen (Crime Scene)</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:40%;background:#ddaa00;"></div></div><span class="etl-pct-val" style="color:#ddaa00;">40%</span></div><div class="etl-cell etl-actors">Feuerwehr + Sanitäter + FIREFIGHTER</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">23:00</div><div class="etl-cell etl-event">Nächtliche Ruhe — Patrols</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:20%;background:#88cc44;"></div></div><span class="etl-pct-val" style="color:#88cc44;">20%</span></div><div class="etl-cell etl-actors">Patrol-Gruppen · Polizei-Abriegelung</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">00:00</div><div class="etl-cell etl-event">MITTERNACHT — Day End · Statistik</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:15%;background:#44dd88;"></div></div><span class="etl-pct-val" style="color:#44dd88;">15%</span></div><div class="etl-cell etl-actors">Statistik-Screen · Score-Berechnung</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+    <div class="etl-row"><div class="etl-cell etl-time">06:00</div><div class="etl-cell etl-event">CYCLE RESTART — Neuer Tag</div><div class="etl-cell etl-level"><div class="etl-bar-wrap"><div class="etl-bar-fill" style="width:10%;background:#44dd88;"></div></div><span class="etl-pct-val" style="color:#44dd88;">10%</span></div><div class="etl-cell etl-actors">Reset + Nachwirkungen aus vorherigem Tag</div><div class="etl-status-cell"><span class="status-chip chip-pending">OFFEN</span></div></div>
+  </div>
+</div>
+
+<!-- ════════ NPC-TYPEN MATRIX ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 05</span>
+    <span class="section-title">NPC-TYPEN MATRIX · 16 TYPEN · 200.000+ POLYGONE LOD-0 · 5 LOD-STUFEN</span>
+    <span class="section-pct">0 / 16</span>
+  </div>
+  <div class="npc-table-wrap">
+    <table class="npc-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NPC-TYP</th>
+          <th>LOD-0 POLYGONE</th>
+          <th>LOD-SYSTEM (5 Stufen)</th>
+          <th>TEXTUR-BUDGET</th>
+          <th>FORTSCHRITT</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="npc-id">#01</td><td class="npc-name">POLICE</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#02</td><td class="npc-name">RIOT_POLICE</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#03</td><td class="npc-name">SEK</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#04</td><td class="npc-name">DEMONSTRATOR</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#05</td><td class="npc-name" style="color:var(--accent-gold);">KRAUSE (HERO)</td><td class="poly-val" style="color:var(--accent-gold);">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#06</td><td class="npc-name">CIVILIAN</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#07</td><td class="npc-name">JOURNALIST</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#08</td><td class="npc-name">MEDIC</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#09</td><td class="npc-name">FIREFIGHTER</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#10</td><td class="npc-name" style="color:var(--accent-red);">EXTREMIST</td><td class="poly-val" style="color:var(--accent-red);">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#11</td><td class="npc-name">WATER_CANNON_OPERATOR</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#12</td><td class="npc-name" style="color:var(--accent-electric);">POLICE_CHIEF</td><td class="poly-val" style="color:var(--accent-electric);">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#13</td><td class="npc-name">STREET_VENDOR</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#14</td><td class="npc-name">TOURIST</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#15</td><td class="npc-name">SECURITY_GUARD</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+        <tr><td class="npc-id">#16</td><td class="npc-name">CHILD</td><td class="poly-val">200.000+</td><td><div class="lod-mini"><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div><div class="lod-dot pending"></div></div></td><td style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">4K / 2K / 2K / 2K / 1K</td><td><div class="npc-progress-bar"><div class="npc-pb-fill"></div></div></td><td><span class="status-chip chip-pending">ZU ERSTELLEN</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════ QA CHECKLIST ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 06</span>
+    <span class="section-title">QA-CHECKLISTE · PRE-DEPLOYMENT · ALLE KATEGORIEN</span>
+    <span class="section-pct">0 / 30</span>
+  </div>
+  <div class="qa-grid">
+    <!-- Kern-Systeme -->
+    <div class="qa-panel">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-electric);">⬡ KERN-SYSTEME</span>
+        <span class="status-chip chip-pending">0 / 4 ✓</span>
+      </div>
+      <div class="qa-panel-body">
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Zeit-System läuft korrekt (1 Sek = 1 Min Spielzeit)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Alle 40+ Events registriert und getestet</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">NPC-Spawning funktioniert zu definierten Zeiten</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Event-Ketten (Ultimatum → Gewalt → Chaos) laufen</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-progress-row">
+          <div class="qa-pbar"><div class="qa-pbar-fill" style="width:0%;"></div></div>
+          <span class="qa-pct">0%</span>
+        </div>
+      </div>
+    </div>
+    <!-- Grafik -->
+    <div class="qa-panel">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-amber);">⬡ GRAFIK · HYPER-AAA</span>
+        <span class="status-chip chip-pending">0 / 4 ✓</span>
+      </div>
+      <div class="qa-panel-body">
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Alle 16 NPC-Typen haben ≥200.000 Polygone (LOD-0)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">LOD-System wechselt korrekt (5 Stufen: 0m→&gt;100m)</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">PBR-Materials angewendet (6 Maps pro NPC)</div><span class="qa-indicator">MITTEL</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Stephansdom hat ≥750.000 Polygone (LOD-0)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-progress-row">
+          <div class="qa-pbar"><div class="qa-pbar-fill" style="width:0%;"></div></div>
+          <span class="qa-pct">0%</span>
+        </div>
+      </div>
+    </div>
+    <!-- Performance -->
+    <div class="qa-panel">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-green);">⬡ PERFORMANCE</span>
+        <span class="status-chip chip-pending">0 / 4 ✓</span>
+      </div>
+      <div class="qa-panel-body">
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">50 NPCs gleichzeitig bei ≥60 FPS</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">200 NPCs Peak Chaos bei ≥30 FPS</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Memory-Footprint &lt;3GB (Cloud RAM)</div><span class="qa-indicator">MITTEL</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Keine Memory-Leaks nach 10h Laufzeit</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-progress-row">
+          <div class="qa-pbar"><div class="qa-pbar-fill" style="width:0%;"></div></div>
+          <span class="qa-pct">0%</span>
+        </div>
+      </div>
+    </div>
+    <!-- UI/UX -->
+    <div class="qa-panel">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-purple);">⬡ UI / UX</span>
+        <span class="status-chip chip-pending">0 / 4 ✓</span>
+      </div>
+      <div class="qa-panel-body">
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">HUD vollständig (Zeit + FPS + Eskalation + Minimap)</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Dialog-System funktioniert (5 Verzweigungen)</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Taktik-Menü (4 Optionen A/B/C/D)</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Controls responsiv (Touch + Maus + Tastatur)</div><span class="qa-indicator">MITTEL</span></div>
+        <div class="qa-progress-row">
+          <div class="qa-pbar"><div class="qa-pbar-fill" style="width:0%;"></div></div>
+          <span class="qa-pct">0%</span>
+        </div>
+      </div>
+    </div>
+    <!-- Tests -->
+    <div class="qa-panel">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-cyan);">⬡ AUTOMATISIERTE TESTS</span>
+        <span class="status-chip chip-pending">0 / 3 ✓</span>
+      </div>
+      <div class="qa-panel-body">
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">111/111 Vitest Tests grün (100% Pass-Rate)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">ESLint: 0 Errors, 0 Warnings (Strict)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">TypeScript: Keine `any`, Strict Mode aktiv</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-progress-row">
+          <div class="qa-pbar"><div class="qa-pbar-fill" style="width:0%;"></div></div>
+          <span class="qa-pct">0%</span>
+        </div>
+      </div>
+    </div>
+    <!-- Deployment -->
+    <div class="qa-panel">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-gold);">⬡ DEPLOYMENT</span>
+        <span class="status-chip chip-pending">0 / 4 ✓</span>
+      </div>
+      <div class="qa-panel-body">
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Production Build erfolgreich (Expo/Vite)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Live-URL erreichbar (kein 404)</div><span class="qa-indicator">KRITISCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">Alle Assets laden (NPCs + Dom + Audio)</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-item"><div class="qa-chk"></div><div class="qa-text">GitHub Actions CI/CD Pipeline grün</div><span class="qa-indicator">HOCH</span></div>
+        <div class="qa-progress-row">
+          <div class="qa-pbar"><div class="qa-pbar-fill" style="width:0%;"></div></div>
+          <span class="qa-pct">0%</span>
+        </div>
+      </div>
+    </div>
+    <!-- Home-PC Schutz (full width) -->
+    <div class="qa-panel full-row">
+      <div class="qa-panel-header">
+        <span style="color:var(--accent-red);">⚠ HOME-PC SCHUTZ — ABSOLUT KRITISCH</span>
+        <span class="status-chip chip-block">0 / 4 ✓</span>
+      </div>
+      <div class="qa-panel-body" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
+        <div class="qa-item" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <div class="qa-chk"></div>
+          <div class="qa-text">CPU-Temperatur &lt;50°C während gesamter Entwicklung</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:900;color:var(--accent-red);">ABSOLUT</div>
+        </div>
+        <div class="qa-item" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <div class="qa-chk"></div>
+          <div class="qa-text">GPU-Temperatur &lt;50°C während gesamter Entwicklung</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:900;color:var(--accent-red);">ABSOLUT</div>
+        </div>
+        <div class="qa-item" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <div class="qa-chk"></div>
+          <div class="qa-text">Keinerlei lokale Prozesse (npm, node, build) gelaufen</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:900;color:var(--accent-red);">ABSOLUT</div>
+        </div>
+        <div class="qa-item" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <div class="qa-chk"></div>
+          <div class="qa-text">Home-PC: NUR Browser-Tab zu CodeAnywhere geöffnet</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:900;color:var(--accent-red);">ABSOLUT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PERFORMANCE TARGETS ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 07</span>
+    <span class="section-title">PERFORMANCE-ZIELE · FPS-TARGETS · HARDWARE-GARANTIEN</span>
+    <span class="section-pct">4 SZENARIEN</span>
+  </div>
+  <div class="perf-grid">
+    <div class="perf-card">
+      <div class="perf-scenario">CodeAnywhere IDE geöffnet · Entwicklungsbetrieb</div>
+      <div class="perf-target" style="color:var(--accent-electric);">N/A FPS</div>
+      <div class="perf-detail">GPU-Last Home-PC: 0% · CPU-Last Home: &lt;1%</div>
+      <div class="perf-status-row"><div class="perf-bar"><div class="perf-bar-fill" style="background:var(--accent-green);width:0%;"></div></div><span style="font-family:var(--font-display);font-size:10px;color:var(--text-dim);">ZU VERIFIZIEREN</span></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-scenario">Browser-Tab (Web Preview) · Normale Nutzung</div>
+      <div class="perf-target" style="color:var(--accent-cyan);">N/A FPS</div>
+      <div class="perf-detail">GPU-Last Home: &lt;5% · Temp-Ziel: &lt;50°C</div>
+      <div class="perf-status-row"><div class="perf-bar"><div class="perf-bar-fill" style="background:var(--accent-cyan);width:0%;"></div></div><span style="font-family:var(--font-display);font-size:10px;color:var(--text-dim);">ZU VERIFIZIEREN</span></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-scenario">50 NPCs · Standard-Gameplay · Cloud-GPU</div>
+      <div class="perf-target" style="color:var(--accent-gold);">≥60 FPS</div>
+      <div class="perf-detail">GPU-Last Home: 0% · LOD-System aktiv</div>
+      <div class="perf-status-row"><div class="perf-bar"><div class="perf-bar-fill" style="background:var(--accent-gold);width:0%;"></div></div><span style="font-family:var(--font-display);font-size:10px;color:var(--text-dim);">ZU TESTEN</span></div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-scenario">200 NPCs · Peak Chaos (21:00) · SEK + Mob</div>
+      <div class="perf-target" style="color:var(--accent-red);">≥30 FPS</div>
+      <div class="perf-detail">GPU-Last Home: 0% · LOD-4 Billboard ab 100m</div>
+      <div class="perf-status-row"><div class="perf-bar"><div class="perf-bar-fill" style="background:var(--accent-red);width:0%;"></div></div><span style="font-family:var(--font-display);font-size:10px;color:var(--text-dim);">ZU TESTEN</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TEMPERATUR-SCHWELLENWERTE ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 08</span>
+    <span class="section-title">TEMPERATUR-SCHWELLENWERTE · HOME-PC · AMPELSYSTEM</span>
+    <span class="section-pct">4 ZONEN</span>
+  </div>
+  <div class="temp-table">
+    <div class="tt-header">HOME-PC TEMPERATUR-PROTOKOLL · AKTUELL: 94°C (NOTFALL-ZONE)</div>
+    <div class="tt-row" style="background:rgba(0,255,136,0.04);">
+      <div class="tt-cell"><span class="tt-range" style="color:var(--accent-green);">&lt; 50°C ✅</span></div>
+      <div class="tt-cell" style="color:var(--accent-green);">SICHER — Normal-Betrieb · Volle Entwicklung möglich</div>
+      <div class="tt-cell tt-bar-cell"><div class="tt-bar" style="background:linear-gradient(90deg,#00ff88,#44dd88);width:50%;height:100%;opacity:0.8;"></div></div>
+      <div class="tt-cell"><span style="font-family:var(--font-display);font-size:13px;color:var(--accent-green);font-weight:700;">NUR BROWSER</span></div>
+    </div>
+    <div class="tt-row" style="background:rgba(255,214,0,0.03);">
+      <div class="tt-cell"><span class="tt-range" style="color:var(--accent-gold);">50–60°C ⚠</span></div>
+      <div class="tt-cell" style="color:var(--accent-gold);">WARNUNG — Browser schließen · Andere Tabs zumachen</div>
+      <div class="tt-cell tt-bar-cell"><div class="tt-bar" style="background:linear-gradient(90deg,#ffd600,#ffaa00);width:65%;height:100%;opacity:0.8;"></div></div>
+      <div class="tt-cell"><span style="font-family:var(--font-display);font-size:13px;color:var(--accent-gold);font-weight:700;">BROWSER SCHLIEßEN</span></div>
+    </div>
+    <div class="tt-row" style="background:rgba(255,100,0,0.04);">
+      <div class="tt-cell"><span class="tt-range" style="color:var(--accent-red);">60–80°C 🔥</span></div>
+      <div class="tt-cell" style="color:var(--accent-red);">KRITISCH — SOFORT alle Tabs schließen · Pause einlegen</div>
+      <div class="tt-cell tt-bar-cell"><div class="tt-bar" style="background:linear-gradient(90deg,#ff6600,#ff2200);width:80%;height:100%;opacity:0.8;"></div></div>
+      <div class="tt-cell"><span style="font-family:var(--font-display);font-size:13px;color:var(--accent-red);font-weight:700;">SOFORT SCHLIESSEN</span></div>
+    </div>
+    <div class="tt-row" style="background:rgba(255,20,68,0.07);border:1px solid rgba(255,34,68,0.25);">
+      <div class="tt-cell"><span class="tt-range" style="color:var(--accent-red);text-shadow:var(--glow-red);">80–94°C ☠</span></div>
+      <div class="tt-cell" style="color:var(--accent-red);font-weight:700;">NOTFALL — PC runterfahren · Projekt sofort pausieren!</div>
+      <div class="tt-cell tt-bar-cell"><div class="tt-bar" style="background:linear-gradient(90deg,#ff2244,#ff0066);width:96%;height:100%;animation:temppulse 0.5s infinite alternate;"></div></div>
+      <div class="tt-cell"><span style="font-family:var(--font-display);font-size:13px;color:var(--accent-red);font-weight:900;text-shadow:var(--glow-red);">☠ SHUTDOWN</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ DEPLOYMENT PIPELINE ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 09</span>
+    <span class="section-title">CLOUD DEPLOYMENT PIPELINE · CODEANYWHERE → GITHUB → CI/CD → PRODUCTION</span>
+    <span class="section-pct">5 STAGES</span>
+  </div>
+  <div class="deploy-pipe">
+    <div class="pipe-nodes">
+      <div class="pipe-node">
+        <div class="pipe-icon pn-cloud">CODE<br>ANY<br>WHERE</div>
+        <div class="pipe-label">Cloud IDE</div>
+        <div class="pipe-status" style="color:var(--accent-electric);">AKTIV</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-github">GIT<br>HUB</div>
+        <div class="pipe-label">Repository</div>
+        <div class="pipe-status" style="color:var(--text-dim);">IN EINRICHTUNG</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-ci">CI/CD<br>GH<br>ACTIONS</div>
+        <div class="pipe-label">ESLint + TS + Tests</div>
+        <div class="pipe-status" style="color:var(--text-dim);">ZU KONFIGURIEREN</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-build">BUILD<br>EXPO<br>VITE</div>
+        <div class="pipe-label">Production Build</div>
+        <div class="pipe-status" style="color:var(--text-dim);">ZU KONFIGURIEREN</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-pending">VER<br>CEL<br>?</div>
+        <div class="pipe-label">Option A: Vercel</div>
+        <div class="pipe-status" style="color:var(--text-dim);">NOCH OFFEN</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);padding-bottom:28px;padding:0 6px;display:flex;align-items:center;padding-bottom:28px;font-size:16px;"> / </div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-pending">NET<br>LI<br>FY</div>
+        <div class="pipe-label">Option B: Netlify</div>
+        <div class="pipe-status" style="color:var(--text-dim);">NOCH OFFEN</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);padding-bottom:28px;padding:0 6px;display:flex;align-items:center;padding-bottom:28px;font-size:16px;"> / </div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-pending">RAIL<br>WAY</div>
+        <div class="pipe-label">Option C: Railway</div>
+        <div class="pipe-status" style="color:var(--text-dim);">NOCH OFFEN</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);padding-bottom:28px;padding:0 6px;display:flex;align-items:center;padding-bottom:28px;font-size:16px;"> / </div>
+      <div class="pipe-node">
+        <div class="pipe-icon pn-pending">DOC<br>KER<br>RND</div>
+        <div class="pipe-label">Option D: Render</div>
+        <div class="pipe-status" style="color:var(--text-dim);">NOCH OFFEN</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-dim);display:grid;grid-template-columns:repeat(5,1fr);gap:12px;text-align:center;">
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--accent-electric);">STAGE 1<br><span style="color:var(--text-dim);">Code Bearbeiten</span></div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);">STAGE 2<br><span style="color:var(--text-dim);">git commit · git push</span></div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);">STAGE 3<br><span style="color:var(--text-dim);">Lint + Test + Validate</span></div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);">STAGE 4<br><span style="color:var(--text-dim);">expo build · bundle</span></div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);">STAGE 5<br><span style="color:var(--text-dim);">Live-URL Deployment</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TECH STACK TAGS ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 10</span>
+    <span class="section-title">TECHNOLOGIE-STACK · VOLLSTÄNDIGE KOMPONENTENÜBERSICHT</span>
+    <span class="section-pct">STACK</span>
+  </div>
+  <div class="tag-cloud-block">
+    <div style="font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-electric);margin-bottom:10px;">FRONTEND / 3D RENDERING</div>
+    <span class="tag tag-blue">React 19.0.0</span>
+    <span class="tag tag-blue">React Native</span>
+    <span class="tag tag-blue">Expo Router</span>
+    <span class="tag tag-blue">React Three Fiber</span>
+    <span class="tag tag-blue">Three.js 0.170.0</span>
+    <span class="tag tag-blue">@react-three/drei</span>
+    <span class="tag tag-blue">WebGPU (Primär)</span>
+    <span class="tag tag-blue">WebGL 2.0 (Fallback)</span>
+    <span class="tag tag-blue">Canvas2D (Emergency)</span>
+    <div style="font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-cyan);margin-top:14px;margin-bottom:10px;">STATE MANAGEMENT / TYPEN</div>
+    <span class="tag tag-green">Zustand 5.0+</span>
+    <span class="tag tag-green">TypeScript 5.7+</span>
+    <span class="tag tag-green">Strict Mode</span>
+    <span class="tag tag-green">noImplicitAny</span>
+    <span class="tag tag-green">strictNullChecks</span>
+    <span class="tag tag-green">Zero any</span>
+    <div style="font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-gold);margin-top:14px;margin-bottom:10px;">CLOUD INFRASTRUKTUR</div>
+    <span class="tag tag-gold">CodeAnywhere Cloud IDE</span>
+    <span class="tag tag-gold">GitHub Repository</span>
+    <span class="tag tag-gold">GitHub Actions CI/CD</span>
+    <span class="tag tag-gold">Node.js 20+</span>
+    <span class="tag tag-gold">npm 10+</span>
+    <span class="tag tag-gold">Cloud GPU Remote</span>
+    <div style="font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-amber);margin-top:14px;margin-bottom:10px;">TESTING / QA</div>
+    <span class="tag tag-amber">Vitest</span>
+    <span class="tag tag-amber">ESLint</span>
+    <span class="tag tag-amber">111 Unit-Tests</span>
+    <span class="tag tag-amber">PolygonValidator.ts</span>
+    <span class="tag tag-amber">KI-gestützte Tests</span>
+    <div style="font-family:var(--font-display);font-size:10px;letter-spacing:3px;color:var(--accent-red);margin-top:14px;margin-bottom:10px;">GRAFIK-SPEZIFIKATION</div>
+    <span class="tag tag-red">PBR Materials</span>
+    <span class="tag tag-red">4K-8K Texturen</span>
+    <span class="tag tag-red">200k+ Poly NPC (LOD-0)</span>
+    <span class="tag tag-red">750k Poly Stephansdom</span>
+    <span class="tag tag-red">5 LOD-Stufen</span>
+    <span class="tag tag-red">Subsurface Scattering</span>
+    <span class="tag tag-red">Global Illumination</span>
+  </div>
+</div>
+
+<!-- ════════ SOFORT-AKTIONEN ════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">ABSCHNITT 11</span>
+    <span class="section-title">SOFORTIGE NÄCHSTE SCHRITTE · AKTIONSPLAN · SCHRITT FÜR SCHRITT</span>
+    <span class="section-pct">5 SCHRITTE</span>
+  </div>
+  <div style="background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:4px;overflow:hidden;">
+    <div style="display:grid;grid-template-columns:60px 1fr 160px;border-bottom:1px solid var(--border-dim);background:var(--bg-deep);padding:10px 20px;font-family:var(--font-display);font-size:9px;letter-spacing:3px;color:var(--text-dim);">
+      <div>NR</div><div>AKTION</div><div>PLATTFORM</div>
+    </div>
+    <div style="display:grid;grid-template-columns:60px 1fr 160px;border-bottom:1px solid rgba(255,255,255,0.04);padding:14px 20px;align-items:start;">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--accent-electric);">01</div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">CodeAnywhere verifizieren + Terminal prüfen</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);background:rgba(0,255,204,0.04);padding:6px 10px;border-radius:2px;border:1px solid rgba(0,255,204,0.15);">node --version · npm --version · git --version</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:4px;">Ziel: Node ≥20.0.0 · npm ≥10.0.0 · git ≥2.40.0</div>
+      </div>
+      <div><span class="status-chip chip-pending">CLOUD IDE</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:60px 1fr 160px;border-bottom:1px solid rgba(255,255,255,0.04);padding:14px 20px;align-items:start;">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--accent-cyan);">02</div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">GitHub Repository klonen</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);background:rgba(0,255,204,0.04);padding:6px 10px;border-radius:2px;border:1px solid rgba(0,255,204,0.15);">cd /workspace &amp;&amp; git clone https://github.com/strazzusochr/PandemieSARScov.git</div>
+      </div>
+      <div><span class="status-chip chip-pending">GITHUB</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:60px 1fr 160px;border-bottom:1px solid rgba(255,255,255,0.04);padding:14px 20px;align-items:start;">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--accent-gold);">03</div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Expo-Projekt initialisieren + Dependencies</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);background:rgba(0,255,204,0.04);padding:6px 10px;border-radius:2px;border:1px solid rgba(0,255,204,0.15);">npx create-expo-app@latest . --template blank-typescript<br>npm install three@0.170.0 @react-three/fiber zustand</div>
+      </div>
+      <div><span class="status-chip chip-pending">CLOUD TERMINAL</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:60px 1fr 160px;border-bottom:1px solid rgba(255,255,255,0.04);padding:14px 20px;align-items:start;">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--accent-amber);">04</div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Erste Test-App starten + Web-Preview öffnen</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);background:rgba(0,255,204,0.04);padding:6px 10px;border-radius:2px;border:1px solid rgba(0,255,204,0.15);">npm start → Web-Preview → "JetBRAIN" erscheint im Browser</div>
+      </div>
+      <div><span class="status-chip chip-pending">EXPO SERVER</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:60px 1fr 160px;padding:14px 20px;align-items:start;">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--accent-red);">05</div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">⚠ Home-PC Temperatur-Check (KRITISCH!)</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent-red);background:rgba(255,34,68,0.04);padding:6px 10px;border-radius:2px;border:1px solid rgba(255,34,68,0.2);">Prüfe CPU + GPU Temp → muss &lt;50°C sein · Sonst: SOFORT stoppen!</div>
+      </div>
+      <div><span class="status-chip chip-block">HOME-PC CHECK</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FOOTER ════════ -->
+<div class="footer">
+  <div class="footer-logo">JETBRAIN</div>
+  <div style="text-align:center;">
+    MASTERPLAN KONTROLLPROTOKOLL V3.0 · VOLLSTÄNDIG RESET<br>
+    CLOUD-ONLY · ZERO HOME-PC FOOTPRINT · CODEANYWHERE
+  </div>
+  <div style="text-align:right;">
+    LETZTE AKTUALISIERUNG: 2025-03-19<br>
+    NÄCHSTER MEILENSTEIN: PHASE 1 — CLOUD SETUP<br>
+    STATUS: <span style="color:var(--accent-red);font-weight:700;">🔴 NICHT GESTARTET</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

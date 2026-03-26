@@ -1,11 +1,17 @@
 ---
-title: Newwebgame
-emoji: 🚀
-colorFrom: indigo
-colorTo: blue
-sdk: docker
+title: Corona_Kontrol
+emoji: 👮
+colorFrom: red
+colorTo: black
+sdk: static
 pinned: false
-short_description: webgame
+private: true
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+# Corona Control Ultimate - Project Rebirth (Private)
+
+Infinite Engine V1.2 - Rebuilding Vienna's Heart
+
+## Deployment via Git
+
+This Space is a private static React/Vite application.

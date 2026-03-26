@@ -1,0 +1,1156 @@
+  # ⏰ ULTIMATIVER MASTER PLAN — 24H LIVE-EVENT-SYSTEM
+
+## CORONA CONTROL ULTIMATE — KOMPLETTER TAGESABLAUF
+
+---
+
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║           ⏰ 24-STUNDEN ECHTZEIT-EVENT-SYSTEM — LIVE CORONA-DEMO ⏰        ║
+║                                                                              ║
+║   VOLLSTÄNDIG GESCRIPTETE TAGESABLÄUFE MIT DYNAMISCHEN EVENTS              ║
+║   REALISTISCHE DEMO-ESKALATION • POLIZEI-EINSÄTZE • MOB-RIOTS             ║
+║   BRUTALE GEWALT • KEINE ZENSUR • REALTIME-CLOCK                           ║
+║                                                                              ║
+║   System: 1 Spieltag = 24 Minuten Realzeit (1 Min = 1 Stunde im Game)     ║
+║   Events: 40+ gescriptete Ereignisse über 24 Stunden                       ║
+║   Dynamik: NPCs reagieren auf Uhrzeiten & Events                           ║
+║   NPC-LIMIT: MAX 120 gleichzeitig aktiv (Peak ~87 um 21:00)               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## 📋 CHUNK-ÜBERSICHT (12 Implementierungs-Schritte)
+
+| Chunk  | Inhalt                                          | Zeilen | Status |
+| ------ | ----------------------------------------------- | ------ | ------ |
+| **1**  | Zeit-System & HUD-Uhr                           | ~80    | ⬜     |
+| **2**  | Morgen 06:00–09:00 (Aufbau)                     | ~100   | ⬜     |
+| **3**  | Vormittag 10:00–11:30 (Demo wächst)             | ~120   | ⬜     |
+| **4**  | Mittag 12:00–12:30 (Ultimatum & Gewalt)         | ~130   | ⬜     |
+| **5**  | Nachmittag 13:00–14:00 (Wasserwerfer & Räumung) | ~110   | ⬜     |
+| **6**  | Ruhe 15:00–17:30 (Aftermath Phase 1)            | ~80    | ⬜     |
+| **7**  | Abend 18:00–19:00 (Extremisten & Mob-Angriff)   | ~120   | ⬜     |
+| **8**  | Nacht 19:30–20:30 (Bengalos, Barrikaden, SEK)   | ~130   | ⬜     |
+| **9**  | Peak 21:00–21:30 (Totale Eskalation)            | ~100   | ⬜     |
+| **10** | Aftermath 22:00–06:00 (Aufräumen & Reset)       | ~80    | ⬜     |
+| **11** | Dynamisches Event-System & Spieler-Interaktion  | ~100   | ⬜     |
+| **12** | Technische Implementation & Quality Control     | ~120   | ⬜     |
+
+---
+
+## 🔢 NPC-SPAWN-TABELLE (angepasst an MAX 120)
+
+> Basierend auf [NPC_SPAWN_TABELLE.md](file:///c:/Users/immer/Desktop/corona-control-project/corona-control-ultimate/docs/Prompts/NPC_SPAWN_TABELLE.md) und [eventScheduler.ts](file:///c:/Users/immer/Desktop/corona-control-project/corona-control-ultimate/src/systems/eventScheduler.ts)
+
+**NPC-Typen:** `zivilist` | `demonstrant` | `polizist` | `riot_polizei` | `sanitäter` | `extremist` | `sek` | `feuerwehr`
+
+| UHRZEIT | AKTION  | TYP          | ANZAHL | WO / WIE                        | GESAMT |
+| ------- | ------- | ------------ | ------ | ------------------------------- | ------ |
+| 06:00   | SPAWN   | zivilist     | 20     | zufällig 150m Radius um [0,0,0] | 20     |
+| 06:00   | SPAWN   | polizist     | 5      | Patrouille-Route um Platz       | 25     |
+| 08:00   | SPAWN   | demonstrant  | 8      | Stephansplatz [0,0,0]           | 33     |
+| 09:00   | SPAWN   | demonstrant  | 10     | Radius 20m um [0,0,0]           | 43     |
+| 09:00   | SPAWN   | demonstrant  | 7      | Radius 25m um [0,0,0]           | 50     |
+| 10:00   | SPAWN   | demonstrant  | 10     | enger Radius 10m um [0,0,0]     | 60     |
+| 10:00   | SPAWN   | polizist     | 7      | Polizeilinie bei [0,0,30]       | 67     |
+| 10:00   | DESPAWN | zivilist     | 5      | 5 zufällige despawnen           | 62     |
+| 11:00   | SPAWN   | polizist     | 3      | Polizeilinie [0,0,30]           | 65     |
+| 11:00   | DESPAWN | zivilist     | 5      | weitere 5 despawnen             | 60     |
+| 11:30   | DESPAWN | zivilist     | 10     | alle restlichen despawnen       | 50     |
+| 12:00   | SPAWN   | polizist     | 7      | Polizeilinie verstärkt          | 57     |
+| 12:15   | SPAWN   | sanitäter    | 3      | Rand bei [30,0,0]               | 60     |
+| 12:30   | SPAWN   | riot_polizei | 20     | Formation bei [0,0,50]          | 80     |
+| 12:30   | DESPAWN | demonstrant  | 10     | fliehen Richtung Nord           | 70     |
+| 13:00   | DESPAWN | demonstrant  | 10     | Wasserwerfer zerstreut          | 60     |
+| 13:30   | DESPAWN | demonstrant  | 8      | Tränengas treibt weg            | 52     |
+| 14:00   | DESPAWN | demonstrant  | 12     | festgenommen/despawnen          | 40     |
+| 14:00   | DESPAWN | polizist     | 5      | verletzte Cops despawnen        | 35     |
+| 15:00   | DESPAWN | demonstrant  | alle   | letzte weg (~15)                | 20     |
+| 15:00   | DESPAWN | riot_polizei | 10     | abgezogen                       | 10     |
+| 15:00   | SPAWN   | feuerwehr    | 3      | Platz Mitte [0,0,0]             | 13     |
+| 15:00   | SPAWN   | sanitäter    | 2      | bei [10,0,10]                   | 15     |
+| 16:00   | SPAWN   | zivilist     | 8      | Rand 80m (Schaulustige)         | 23     |
+| 17:00   | DESPAWN | feuerwehr    | 3      | abziehen                        | 20     |
+| 17:00   | DESPAWN | sanitäter    | 5      | alle abziehen                   | 15     |
+| 17:30   | DESPAWN | zivilist     | 8      | Ausgangssperre                  | 7      |
+| 18:00   | SPAWN   | extremist    | 6      | Gasse NW [-80,0,-80]            | 13     |
+| 18:00   | SPAWN   | extremist    | 6      | Gasse NO [80,0,-80]             | 19     |
+| 18:00   | SPAWN   | extremist    | 6      | Gasse SW [-80,0,80]             | 25     |
+| 18:00   | SPAWN   | extremist    | 6      | Gasse SO [80,0,80]              | 31     |
+| 18:00   | SPAWN   | extremist    | 6      | Gasse S-Mitte [0,0,100]         | 37     |
+| 19:00   | SPAWN   | polizist     | 5      | Verstärkung [0,0,20]            | 42     |
+| 19:00   | MOVE    | extremist    | 30     | marschieren zu [0,0,0]          | 42     |
+| 19:30   | DESPAWN | polizist     | 5      | verletzte Cops                  | 37     |
+| 19:30   | DESPAWN | extremist    | 2      | fallen im Kampf                 | 35     |
+| 20:00   | DESPAWN | extremist    | 3      | weitere fallen                  | 32     |
+| 20:30   | SPAWN   | sek          | 25     | Formation bei [0,0,60]          | 57     |
+| 21:00   | SPAWN   | polizist     | 5      | Verstärkung                     | 62     |
+| 21:00   | SPAWN   | sanitäter    | 3      | bei [40,0,40]                   | 65     |
+| 21:30   | DESPAWN | extremist    | 15     | fliehen                         | 50     |
+| 21:30   | DESPAWN | extremist    | 10     | verhaftet/bewusstlos            | 40     |
+| 22:00   | DESPAWN | sek          | 15     | Teilabzug                       | 25     |
+| 22:00   | DESPAWN | polizist     | 10     | Teilabzug                       | 15     |
+| 22:00   | SPAWN   | feuerwehr    | 4      | brennende Objekte               | 19     |
+| 22:00   | SPAWN   | sanitäter    | 4      | Verletzte versorgen             | 23     |
+| 23:00   | DESPAWN | feuerwehr    | 4      | abziehen                        | 19     |
+| 23:00   | DESPAWN | sanitäter    | 4      | abziehen                        | 15     |
+| 23:00   | DESPAWN | sek          | 10     | alle weg                        | 5      |
+| 23:00   | DESPAWN | polizist     | 8      | nur Checkpoint                  | 12     |
+
+```
+HARTES LIMIT:    if (aktiveNPCs.size >= 120) → KEIN Spawn, return null
+MAX GLEICHZEITIG: ~87 NPCs bei 21:00
+ZENTRUM:          Stephansplatz [0, 0, 0]
+POSITIONS-FORMAT: [x, 0, z] — Y ist immer 0 (Boden)
+```
+
+---
+
+## 🕐 CHUNK 1 — ZEIT-SYSTEM & HUD-UHR
+
+### ECHTZEIT-UHR MECHANIK
+
+**Technische Implementation:**
+
+```
+ZEIT-KONVERSION:
+- 1 Spieltag = 24 Minuten Realzeit
+- 1 Spielstunde = 60 Sekunden Realzeit
+- 1 Spielminute = 1 Sekunde Realzeit
+
+ZEIT-FORMAT:
+- 24-Stunden-Format (00:00 - 23:59)
+- Digital angezeigt im HUD (rechts oben)
+- Datum: Tag/Monat/Jahr (z.B. 17.03.2021)
+
+UHR-ANZEIGE:
+Position: Rechts oben im HUD
+Größe: 80px × 40px
+Font: Digital-LCD-Style
+Farbe: Weiß (Tag), Gelb (Dämmerung), Blau (Nacht)
+Format: "14:37" (Stunden:Minuten)
+Zusatz: "Mittwoch, 17. März 2021"
+
+UPDATE-RATE:
+- Echtzeit-Sekunde = 1 Spielminute
+- UI-Update: Alle 1 Sekunde
+- Event-Check: Alle 5 Sekunden
+```
+
+**Zeit-Multiplikator (Optional für Spieler):**
+
+```
+EINSTELLUNGEN:
+- Echtzeit (1:1): 24 Stunden = 24 Stunden (für Hardcore)
+- Beschleunigt 1 (60x): 24 Stunden = 24 Minuten (Standard)
+- Beschleunigt 2 (120x): 24 Stunden = 12 Minuten (Schnell)
+- Beschleunigt 3 (240x): 24 Stunden = 6 Minuten (Sehr schnell)
+- Pausierbar: Ja (im Menü)
+```
+
+---
+
+## 🌅 CHUNK 2 — MORGEN (06:00–09:00) — AUFBAU & VORBEREITUNG
+
+### 06:00 — TAGESBEGINN: STADT ERWACHT
+
+**Automatische Aktionen:**
+
+- ✅ Straßenlaternen schalten automatisch AUS
+- ✅ Sonnenaufgang-Shader aktiviert (orangefarbenes Licht)
+- ✅ Erste NPCs spawnen (Frühaufsteher, Jogger)
+- ✅ Traffic-Dichte steigt auf 20%
+- ✅ Shops öffnen (Bäckereien, Cafés)
+- ✅ Hintergrund-Sounds: Vogelgezwitscher, vereinzelte Autos
+
+**NPC-Behavior:**
+
+- 20 Zivilisten spawnen (verteilt 150m Radius)
+- 5 Polizisten spawnen (Patrouille-Route)
+- Aktivitäten: Zur Arbeit gehen, einkaufen, joggen
+- Keine Demonstranten aktiv (noch zu früh)
+- **GESAMT: 25 NPCs aktiv**
+
+**Spieler-Optionen:**
+
+- Patrol-Missionen verfügbar (ruhig)
+- Shops geöffnet (Equipment kaufen)
+- Training-Missionen (Schießstand, Nahkampf-Training)
+
+---
+
+### 08:00 — DEMO-VORBEREITUNG BEGINNT
+
+**Event: "Erste Demonstranten treffen ein"**
+
+**Location:** Stephansplatz [0,0,0]
+
+**Ablauf:**
+
+1. **08:00:00** — 8 Demonstranten spawnen am Stephansplatz
+2. **08:05:00** — Organisatoren bauen Bühne auf (3 NPCs mit Werkzeug)
+3. **08:15:00** — Sound-System wird getestet (Musik-Fetzen hörbar)
+4. **08:30:00** — Weitere Demonstranten treffen ein
+5. **08:45:00** — Schilder werden verteilt (NPCs halten Schilder hoch)
+   - Schilder-Texte: "FREIHEIT STATT ANGST", "GRUNDGESETZ GILT", "NEIN ZU LOCKDOWNS"
+6. **09:00:00** — 17 weitere Demonstranten (10 + 7), friedlich versammelt
+
+**NPC-Verhalten (Demonstranten):**
+
+- Stehen in Gruppen (5-10 NPCs)
+- Reden miteinander (Gestikulieren, Dialog-Animationen)
+- Halten Schilder hoch
+- Schwenken Fahnen (Animation)
+- Trinken Kaffee, essen Snacks
+- Mood: PEACEFUL (noch keine Aggression)
+- Audio: Murmeln, Gelächter, einzelne Rufe
+
+**Polizei-Reaktion:**
+
+- 5 Polizisten Patrouille am Rand (passive Überwachung)
+- Keine Ansagen, keine Intervention
+- Spieler erhält Mission: "Demonstration beobachten"
+
+**GESAMT nach 09:00: 50 NPCs aktiv** (20 Ziv + 25 Demo + 5 Pol)
+
+---
+
+## 🌞 CHUNK 3 — VORMITTAG (10:00–11:30) — DEMO WÄCHST
+
+### 10:00 — MASSEN-ZUSTROM
+
+**Event: "Massen-Zustrom"**
+
+**Ablauf:**
+
+1. **10:00:00** — 10 weitere Demonstranten spawnen (enger Radius 10m)
+2. **10:00:00** — 7 Polizisten bilden Polizeilinie bei [0,0,30]
+3. **10:00:00** — 5 Zivilisten despawnen (verlassen nervös die Gegend)
+4. **10:20:00** — Erste Sprechchöre beginnen
+   - Audio: "Freiheit! Freiheit! Freiheit!" (synchronized chanting)
+5. **10:30:00** — Musik startet (Protestsongs, laut)
+6. **10:45:00** — Crowd-Density erhöht, Platz wird voll
+
+**Crowd-Dynamik:**
+
+- NPCs verteilen sich um Bühne (Radius 30 Meter)
+- Bewegung: Langsames Hin-und-Her-Schwanken (Crowd-Animation)
+- Fahnen schwenken im Rhythmus
+- Schilder werden hochgehalten
+- Mood: TENSE (Spannung steigt, aber noch friedlich)
+
+**GESAMT nach 10:00: 62 NPCs aktiv** (15 Ziv + 35 Demo + 12 Pol)
+**Eskalations-Level: 15%**
+
+---
+
+### 11:00 — DEMO-REDEN BEGINNEN
+
+**Event: "Hauptredner auf der Bühne"**
+
+**Ablauf:**
+
+1. **11:00:00** — 3 weitere Polizisten zur Linie, 5 Zivilisten despawnen
+2. **11:00:00** — Musik wird leiser
+3. **11:01:00** — Redner (NPC) betritt Bühne
+   - Name: "Dr. Michael Hoffmann" (Oppositions-Politiker)
+   - Animation: Geht zum Mikrofon, hebt Hand (Ruhe-Geste)
+4. **11:02:00** — Rede beginnt
+   - Audio: Vorgefertigte Sprachsamples (Deutsch)
+   - Inhalt:
+     - "Bürger Wiens! Wir sind hier, weil unsere Rechte beschnitten werden!"
+     - "Die Regierung will uns kontrollieren!"
+     - "Wir fordern ein Ende der Maßnahmen!"
+   - Dauer: 5 Minuten (11:02 - 11:07)
+5. **11:03:00** — Crowd reagiert
+   - Jubel-Sounds bei bestimmten Sätzen
+   - Klatschen-Animation (alle NPCs synchron)
+   - Schilder werden höher gehalten
+6. **11:07:00** — Rede endet, Applaus (30 Sekunden)
+
+**Crowd-Verhalten während Rede:**
+
+- Alle NPCs schauen zur Bühne (Head-Tracking)
+- Keine Bewegung (stehen still)
+- Klatschen bei Applaus-Momenten
+- Vereinzelte Rufe: "Ja!", "Genau!", "Freiheit!"
+- Mood: ENTHUSIASTIC (begeistert, aber noch friedlich)
+
+**GESAMT nach 11:00: 60 NPCs aktiv** (10 Ziv + 35 Demo + 15 Pol)
+**Eskalations-Level: 15%**
+
+---
+
+### 11:30 — WEITERE REDNER & ANHEIZUNG
+
+**Event: "Aggressive Rhetorik"**
+
+**Ablauf:**
+
+1. **11:30:00** — Alle restlichen 10 Zivilisten despawnen
+2. **11:30:00** — Zweiter Redner (NPC): "Karl Weber" (Aktivist)
+   - Ton: Aggressiver, lauter
+   - Inhalt:
+     - "Die Polizei ist das Werkzeug der Unterdrückung!"
+     - "Wir lassen uns nicht einschüchtern!"
+     - "Heute zeigen wir unsere Stärke!"
+3. **11:35:00** — Crowd wird unruhiger
+   - Mood: ANGRY (wütend)
+   - Rufe werden lauter
+   - Erste aggressive Gesten (Faust-Heben)
+   - Einzelne NPCs brüllen
+4. **11:40:00** — Dritter Redner (extremer)
+   - Ruft zu Widerstand auf (indirekt)
+   - Crowd-Reaktion: Sehr laut, aggressiv
+
+**Polizei-Reaktion:**
+
+- Polizei-Chef (NPC) spricht in Funkgerät
+- Verstärkung wird angefordert
+- Spieler erhält Update: "Situation verschärft sich"
+
+**GESAMT nach 11:30: 50 NPCs aktiv** (0 Ziv + 35 Demo + 15 Pol)
+**Eskalations-Level: 25%**
+
+---
+
+## 🔥 CHUNK 4 — MITTAG (12:00–12:30) — ULTIMATUM & ERSTE GEWALT
+
+### 12:00 — POLIZEI-ULTIMATUM
+
+**Event: "Auflösungs-Ansage"**
+
+**Ablauf:**
+
+1. **12:00:00** — 7 weitere Polizisten Verstärkung (gesamt 22 Cops)
+2. **12:00:00** — Polizei-Staffel-Chef (NPC) betritt Bühne
+   - Name: "Oberst Martin Gruber"
+   - Begleitet von 4 Polizisten (schwer bewaffnet)
+   - Animation: Marschiert entschlossen auf Bühne
+3. **12:01:00** — Mikrofon-Übernahme
+   - Redner werden von Bühne gedrängt (sanft aber bestimmt)
+4. **12:02:00** — **ANSAGE BEGINNT:**
+   - Audio (Deutsch, autoritär):
+     > "Hiermit wird diese Demonstration für beendet erklärt!"
+     > "Sie haben 15 Minuten, um den Platz zu verlassen!"
+     > "Bei Nichteinhaltung wird Gewalt angewendet!"
+     > "Dies ist Ihre einzige Warnung!"
+5. **12:03:00** — Ansage endet
+
+**Crowd-Reaktion:**
+
+- **12:03:30** — 2 Sekunden Stille (Schock)
+- **12:04:00** — EXPLOSION DER WUT
+  - Crowd brüllt: "NEIN!", "Scheiß Bullen!", "Wir gehen nicht!"
+  - Schilder werden aggressiv geschwenkt
+  - Erste NPCs werfen Objekte:
+    - **12:04:15** — 3 Flaschen fliegen (Projektile spawnen)
+    - **12:04:30** — 5 Bierdosen geworfen
+    - **12:04:45** — 2 Schilder fliegen Richtung Bühne
+  - Mood: RIOTING (Aufruhr beginnt)
+
+**Polizei-Reaktion:**
+
+- **12:05:00** — Polizei zieht sich von Bühne zurück (taktischer Rückzug)
+- **12:06:00** — Polizei-Linie verstärkt (22 Polizisten)
+  - Formation: Shield-Wall (Schilder hoch), Schlagstöcke gezogen
+- **12:07:00** — Wasserwerfer fährt vor
+
+**Visuelle Details:**
+
+- Flaschen zerbrechen auf Boden (Glas-Splitter-Partikel)
+- Bierdosen rollen über Platz
+- Schilder liegen zerbrochen rum
+- Crowd bewegt sich auf Polizei-Linie zu (langsam)
+
+**GESAMT nach 12:00: 57 NPCs** (35 Demo + 22 Pol)
+**Eskalations-Level: 45%**
+
+---
+
+### 12:15 — ERSTE GEWALTAUSBRÜCHE
+
+**Event: "Frontkollision"**
+
+**12:15:00** — 3 Sanitäter spawnen am Rand bei [30,0,0]
+
+**Ablauf:**
+
+1. **12:15:00** — Demonstranten erreichen Polizei-Linie
+   - 20 aggressive Demonstranten vorne, 1 Meter Abstand
+2. **12:16:00** — Erste Schubsereien
+   - 3 Demonstranten schieben Polizisten (Physik-Kollision)
+   - Polizisten halten Linie (Shield-Wall stabil)
+3. **12:17:00** — **ERSTE SCHLÄGE:**
+   - Demonstrant schlägt Polizist-Schild (Nahkampf-Animation)
+   - Polizist schlägt zurück mit Schlagstock (15 HP Schaden)
+   - Demonstrant fällt zu Boden (Ragdoll)
+   - Crowd brüllt auf
+4. **12:18:00** — MASSENSCHLÄGEREI BEGINNT
+   - Nahkampf-Chaos: Schlagstock-Schläge, Faust-Schläge, Tritte, Schieben, Ringen
+   - Audio: Schreie, Schmerzenslaute, Schlag-Sounds
+
+**Gewalt-Details:**
+
+- Blut-Splatter bei Schlägen (Partikel-System)
+- NPCs fallen bewusstlos (Ragdoll)
+- Verletzte NPCs kriechen weg (Crawl-Animation)
+
+**Polizei-Taktik:**
+
+- Shield-Wall hält Linie
+- Einzelne Demonstranten werden rausgegriffen & festgenommen
+- Verletzte werden von Sanitätern weggetragen
+
+**GESAMT: 60 NPCs** (35 Demo + 22 Pol + 3 Sani)
+**Eskalations-Level: 60%**
+
+---
+
+### 12:30 — HUNDERTSCHAFT RÜCKT AN
+
+**Event: "Riot Police Deployment"**
+
+**Ablauf:**
+
+1. **12:30:00** — 20 Riot-Polizisten spawnen bei [0,0,50], marschieren in Formation
+   - Volle Riot-Gear (Helme, Schilde, Schlagstöcke)
+   - Schild-Schlagen im Rhythmus (Einschüchterung)
+   - Audio: BOOM BOOM BOOM (Schild-Beats)
+2. **12:30:00** — 10 Demonstranten fliehen Richtung Nord (DESPAWN)
+3. **12:32:00** — Riot-Police umzingeln Demonstranten (3 Seiten)
+   - 1 Fluchtweg offen (Nord-Seite)
+4. **12:33:00** — **ANSAGE (Megafon):**
+   - "LETZTE WARNUNG! PLATZ VERLASSEN ODER FESTNAHME!"
+
+**Crowd-Reaktion:**
+
+- 10 fliehen (despawnen)
+- 25 bleiben (Mutigen/Extremisten bleiben, werfen mehr Objekte)
+
+**Visuals:**
+
+- Riot-Police-Formation beeindruckend (militärisch)
+- Tension-Musik startet (düsterer Soundtrack)
+
+**GESAMT: 70 NPCs** (25 Demo + 22 Pol + 20 Riot + 3 Sani)
+**Eskalations-Level: 70%**
+
+---
+
+## 💧 CHUNK 5 — NACHMITTAG (13:00–14:00) — WASSERWERFER & RÄUMUNG
+
+### 13:00 — WASSERWERFER-EINSATZ
+
+**Event: "Hydro Cannon Assault"**
+
+**Ablauf:**
+
+1. **13:00:00** — 10 Demonstranten zerstreut (DESPAWN, Wasserwerfer)
+2. **13:00:00** — Wasserwerfer positioniert sich (20m vor Crowd)
+3. **13:01:00** — **FEUER FREI:**
+   - Wasserstrahl schießt (60m Reichweite)
+   - NPCs werden 5 Meter zurückgeschleudert (Knockback-Physik)
+   - Nass-Shader aktiviert (NPCs glänzen)
+4. **13:02:00** — Wasserwerfer schwenkt, 20-30 NPCs getroffen
+5. **13:05:00** — Demonstranten zerstreuen sich
+
+**Visuelle Effekte:**
+
+- Wasser-Partikel-System (massiv)
+- Pfützen auf Boden (Reflection-Maps)
+- NPCs rutschen in Pfützen
+- Regenbogen-Effekt im Wasserstrahl (bei Sonne)
+
+**Spieler-Optionen:**
+
+- Kann Wasserwerfer steuern (wenn in Fahrzeug)
+- Oder von Hundertschaft mitlaufen
+- Oder neutral beobachten
+
+**Gas-Effekt (wenn Spieler in Wolke):**
+
+- Sicht -80% (Screen-Effect: Grünlich-Gelb)
+- Bewegung -40%
+- Schaden: 5 HP/Sek
+- Dauer: 20 Sekunden nach Verlassen
+
+**GESAMT: 60 NPCs** (15 Demo + 22 Pol + 20 Riot + 3 Sani)
+**Eskalations-Level: 65%**
+
+---
+
+### 13:30 — TRÄNENGAS-ANGRIFF
+
+**Event: "Chemical Dispersion"**
+
+**Ablauf:**
+
+1. **13:30:00** — 8 Demonstranten durch Tränengas vertrieben (DESPAWN)
+2. **13:30:00** — Polizei wirft 10 Tränengas-Granaten (Wurf-Animation)
+3. **13:31:00** — Granaten zünden
+   - Weiße Rauch-Wolken (10m Radius pro Granate)
+   - Gesamtfläche: 100m² unter Gas-Wolke
+4. **13:32:00** — NPCs in Gas-Wolke leiden
+   - Husten-Animation, Hände vors Gesicht
+   - Laufen blind umher (desorientiert)
+   - Schreie: "Ich kann nichts sehen!", "Hilfe!"
+5. **13:35:00** — Massenpanik, alle fliehen aus Gas-Wolke
+
+**GESAMT: 52 NPCs** (7 Demo + 22 Pol + 20 Riot + 3 Sani)
+**Eskalations-Level: 50%**
+
+---
+
+### 14:00 — POLIZEI-VORSTOSS
+
+**Event: "Aggressive Clearing"**
+
+**Ablauf:**
+
+1. **14:00:00** — 12 Demonstranten festgenommen (DESPAWN)
+2. **14:00:00** — 5 verletzte Polizisten (DESPAWN)
+3. **14:00:00** — Hundertschaft rückt vor
+   - Formation: Keil (Phalanx), Schlagstöcke schwingend
+4. **14:01:00** — Polizei schlägt brutal durch
+   - **KÖRPERLICHE GEWALT:**
+     - Schlagstock-Schläge: 30 HP
+     - Faustschläge: 15 HP
+     - Tritte: 12 HP
+     - Schildstöße: 25 HP + Knockback
+5. **14:05:00** — Platz wird geräumt
+
+**Brutalitäts-Details:**
+
+- Blut überall (Decals auf Boden)
+- Bewusstlose NPCs werden weggeschleift
+- Schreie, Wimmern, Schmerzenslaute
+- Keine Zensur, volle Gewalt-Darstellung
+
+**GESAMT: 35 NPCs** (~0 Demo + 17 Pol + 15 Riot + 3 Sani)
+**Eskalations-Level: 40%**
+
+---
+
+## 🧹 CHUNK 6 — RUHE (15:00–17:30) — FALSE PEACE
+
+### 15:00 — RUHE VOR DEM STURM
+
+**Event: "False Peace"**
+
+**Ablauf:**
+
+- Alle restlichen Demonstranten despawnen (~15)
+- 10 Riot-Polizei abgezogen (DESPAWN)
+- 3 Feuerwehr spawnen bei [0,0,0] (aufräumen)
+- 2 Sanitäter spawnen bei [10,0,10] (Verletzte versorgen)
+- Platz fast leer, Polizei sichert Gebiet (Checkpoints)
+- Sanitäter behandeln Verletzte
+- Aufräum-Teams (NPCs mit Besen)
+- Zerstörung sichtbar: Zerbrochene Flaschen, Blut-Pfützen, zerfetzte Schilder, brennende Mülleimer
+
+**Spieler-Phase:**
+
+- Patrol-Mission: "Gebiet sichern"
+- Kann mit NPCs sprechen (Verhöre)
+- Beweise sammeln (Fotos von Zerstörung)
+
+**GESAMT: 15 NPCs** (7 Pol + 5 Riot + 3 Feu + 5 Sani — _inkl. vorherige_)
+**Eskalations-Level: 30%**
+
+---
+
+### 16:00 — NACHRICHTENZYKLUS
+
+**Event: "Media Coverage"**
+
+**Ablauf:**
+
+- 8 Zivilisten spawnen (Schaulustige, Rand 80m Radius)
+- TV-Screens zeigen Nachrichten
+- Kamera-Teams (NPC-Journalisten) filmen Platz
+- Interviews mit Polizei-Chef
+- Öffentliche Meinung ändert sich:
+  - Wenn Spieler brutal: Reputation -20 Zivilisten
+  - Wenn Spieler fair: Reputation +10 Zivilisten
+- Radio-Durchsagen hörbar
+
+**Social-Media-Simulation:**
+
+- UI-Notification: "Trending on Twitter: #WienRiot"
+- Hashtags erscheinen kurz auf Screen
+- Öffentlicher Druck steigt
+
+**GESAMT: 23 NPCs**
+
+---
+
+### 17:00–17:30 — ABZUG & SPERRSTUNDE
+
+- 17:00: Feuerwehr abziehen (3 DESPAWN)
+- 17:00: Alle Sanitäter abziehen (5 DESPAWN)
+- 17:30: Alle Zivilisten despawnen (Ausgangssperre, 8 DESPAWN)
+
+**GESAMT nach 17:30: 7 NPCs** (Polizei-Checkpoints)
+**Eskalations-Level: 20%**
+
+---
+
+## 🌑 CHUNK 7 — ABEND (18:00–19:00) — EXTREMISTEN & MOB-ANGRIFF
+
+### 18:00 — DÄMMERUNG & REORGANISATION
+
+**Event: "Extremists Gather"**
+
+**Ablauf:**
+
+1. **18:00:00** — Sonne geht unter (Dämmerung-Shader)
+2. **18:00:00** — **30 schwarz gekleidete Extremisten spawnen** in 5 Gruppen:
+   - 6× Gasse Nord-West [-80,0,-80]
+   - 6× Gasse Nord-Ost [80,0,-80]
+   - 6× Gasse Süd-West [-80,0,80]
+   - 6× Gasse Süd-Ost [80,0,80]
+   - 6× Gasse Süd-Mitte [0,0,100]
+   - Outfit: Komplett schwarz, Sturmhauben, Masken
+   - Ausrüstung: Eisenstangen, Baseballschläger, Molotow-Cocktails, improvisierte Schilde, vereinzelt Pistolen
+3. **18:45:00** — Mob formiert sich, Anführer gibt Befehle
+
+**Mob-Charakteristik:**
+
+- NPC-Typ: Extremist (trainiert, koordiniert)
+- Gesundheit: 120-150 HP
+- Moral: 0/100 (keine Angst)
+- Taktik: Koordiniert, professionell
+- Ziel: Maximales Chaos
+
+**Atmosphäre:**
+
+- Dunkelheit (Straßenlaternen an)
+- Düstere Musik (Tension-Soundtrack)
+- NPCs wirken bedrohlich (Silhouetten)
+
+**GESAMT: 37 NPCs** (7 Pol + 30 Extremisten)
+**Eskalations-Level: 50%**
+
+---
+
+### 19:00 — MOB-ANGRIFF AUF POLIZEI
+
+**Event: "Black Bloc Assault"**
+
+**Ablauf:**
+
+1. **19:00:00** — 5 Polizisten Verstärkung spawnen bei [0,0,20]
+2. **19:00:00** — 30 Extremisten marschieren gemeinsam zu [0,0,0] (MOVE)
+   - Skandieren: "ACAB! ACAB! ACAB!"
+   - Trommeln auf Schilder (Einschüchterung)
+3. **19:02:00** — Polizei reagiert (12 Polizisten, überrumpelt)
+4. **19:03:00** — **FRONTAL-KOLLISION:**
+   - 30 Extremisten vs 12 Polizisten
+   - Nahkampf-Chaos
+   - Eisenstangen vs Schlagstöcke
+   - Molotow-Cocktails fliegen
+   - Vereinzelte Schüsse (Pistolen)
+
+**Kampf-Dynamik:**
+
+- Extremisten aggressiver, Polizei in Unterzahl
+- Guerilla-Taktik: Umzingelung, Flanken-Angriffe, Hit-and-Run
+- Polizei defensiv (Shield-Wall)
+
+**Gewalt-Level:**
+
+- EXTREM (brutalste Szene im Spiel)
+- Knochen brechen (Crunch-Sounds)
+- Blut spritzt (Heavy Gore)
+- NPCs sterben (permanenter Tod für diesen Zyklus)
+
+**GESAMT: 42 NPCs** (12 Pol + 30 Extremisten)
+**Eskalations-Level: 80%**
+
+---
+
+## 🔥 CHUNK 8 — NACHT (19:30–20:30) — BENGALOS, BARRIKADEN, SEK
+
+### 19:30 — BENGALO-INFERNO
+
+**Event: "Pyro Show from Hell"**
+
+1. **19:30:00** — 5 verletzte Polizisten despawnen, 2 Extremisten fallen
+2. **19:30:00** — Extremisten zünden Bengalos
+   - 20 Bengalos gleichzeitig (ROT)
+   - NPCs halten sie hoch (Leucht-Effekt)
+   - Rauch steigt auf (Partikel-System)
+3. **19:31:00** — Bengalos werden geworfen
+   - Fliegen in Polizei-Linien
+   - Treffen Polizisten (Feuer-Schaden: 10 HP/Sek)
+   - Polizisten in Flammen (Panik-Animation)
+4. **19:35:00** — **FEUER-CHAOS:**
+   - 3 Streifenwagen brennen (Volumetric Fire)
+   - Rauch schwarz & dicht
+   - Explosions-Gefahr steigt
+
+**Visuelle Spektakel:**
+
+- Rote Bengalo-Lichter überall (Post-Processing-Glow)
+- Schatten tanzen (Dynamic Lights)
+- Flammen reflektieren auf Gebäuden
+- Apokalyptische Atmosphäre
+
+**Audio:** Knistern der Bengalos, Schreie, Sirenen, Explosionen
+
+**GESAMT: 35 NPCs** (7 Pol + 28 Extremisten)
+**Eskalations-Level: 85%**
+
+---
+
+### 20:00 — AUTO-BRÄNDE & BARRIKADEN
+
+**Event: "Urban Warfare Setup"**
+
+1. **20:00:00** — 3 weitere Extremisten fallen (DESPAWN)
+2. **20:00:00** — Extremisten bauen Barrikaden
+   - Umgestürzte Autos, Müll-Container, Pflastersteine, Zäune
+   - 3 Barrikaden an Haupt-Straßen
+3. **20:10:00** — 5 zusätzliche PKWs brennen, Rauch-Wände
+4. **20:15:00** — Pflastersteine als Wurfgeschosse
+   - Extremisten reißen Pflaster auf
+   - Werfen koordiniert auf Polizei (15 HP pro Treffer)
+
+**Stadt-Verwandlung:**
+
+- Platz sieht aus wie Kriegsgebiet
+- Feuer überall, Rauch, Zerstörung
+- Keine Zivilisten mehr (alle geflohen)
+
+**GESAMT: 32 NPCs** (7 Pol + 25 Extremisten)
+**Eskalations-Level: 90%**
+
+---
+
+### 20:30 — POLIZEI-VERSTÄRKUNG
+
+**Event: "Special Forces Arrival"**
+
+1. **20:30:00** — Hubschrauber-Sound, 3 Polizei-Hubschrauber kreisen
+2. **20:35:00** — **25 SEK spawnen** bei [0,0,60]
+   - Schwer bewaffnet: Sturmgewehre (Steyr AUG), Scharfschützen
+   - Granaten (Blendgranaten, Tränengas)
+   - Vollpanzerung + Helme, Nachtsicht-Geräte
+3. **20:40:00** — SEK umzingelt Platz
+   - Scharfschützen-Laser sichtbar (rote Punkte)
+
+**Macht-Demonstration:**
+
+- SEK wirkt überlegen
+- Extremisten zurückgedrängt aber geben nicht auf
+
+**GESAMT: 57 NPCs** (7 Pol + 25 Extremisten + 25 SEK)
+**Eskalations-Level: 95%**
+
+---
+
+## 💀 CHUNK 9 — PEAK (21:00–21:30) — TOTALE ESKALATION
+
+### 21:00 — HÖHEPUNKT: TOTALE ESKALATION
+
+**Event: "Peak Chaos"**
+
+1. **21:00:00** — 5 Polizisten Verstärkung, 3 Sanitäter bei [40,0,40]
+2. **21:00:00** — **SCHUSSWECHSEL:**
+   - Extremist feuert erste Schüsse (Pistole)
+   - Trifft Polizist (50 HP Schaden), Polizist fällt
+3. **21:00:30** — SEK ERÖFFNET FEUER
+   - Sturmgewehr-Salven, gezielte Schüsse
+   - Extremisten fallen reihenweise
+   - Blut-Fontänen (Gore-Effekt)
+4. **21:02:00** — **ALL-OUT WAR:**
+   - 25 Extremisten vs 12 Polizei + 25 SEK = 37 Sicherheitskräfte
+   - Schüsse überall, Explosionen, Flammen, Rauch, Chaos total
+5. **21:10:00** — Extremisten zurückgedrängt
+   - Barrikaden durchbrochen
+
+**Audio-Hölle:**
+
+- Dauerhaftes Schussfeuer, Explosionen alle 10 Sekunden
+- Schreie, Schmerzenslaute, Sirenen, Hubschrauber-Rotoren, Funksprüche
+
+**Visuelle Überlastung:**
+
+- Muzzle-Flashes, Blendgranaten (Screen wird weiß)
+- Feuer-Glühen, Rauch dichter, Laserpunkte
+- Blut-Splatter auf Kamera (wenn Spieler nah)
+
+**GESAMT PEAK: ~65 NPCs** (12 Pol + 25 Extremisten + 25 SEK + 3 Sani)
+**Eskalations-Level: 100% (MAXIMUM)**
+
+---
+
+### 21:30 — WENDE: EXTREMISTEN FLIEHEN
+
+**Event: "Retreat & Scatter"**
+
+1. **21:30:00** — Extremisten-Anführer: "Rückzug! In die Kanalisation!"
+2. **21:30:00** — 15 Extremisten fliehen (DESPAWN)
+3. **21:30:00** — 10 Extremisten verhaftet/bewusstlos (DESPAWN)
+4. **21:31:00** — Mob zerfällt, rennen in alle Richtungen
+5. **21:35:00** — SEK verfolgt, Verfolgungsjagden, Festnahmen
+
+**Platz-Status:**
+
+- Battlefield (Kriegsgebiet)
+- 40+ Leichen/Bewusstlose am Boden (visuell)
+- Brennende Trümmer, Rauch verhüllt alles
+
+**GESAMT: 40 NPCs** (12 Pol + 0 Extremisten + 25 SEK + 3 Sani)
+**Eskalations-Level: 70% (sinkend)**
+
+---
+
+## 🏥 CHUNK 10 — AFTERMATH (22:00–06:00) — AUFRÄUMEN & RESET
+
+### 22:00 — AFTERMATH: AUFRÄUMEN
+
+**Event: "Crime Scene Processing"**
+
+1. **22:00:00** — 15 SEK Teilabzug (DESPAWN), 10 Polizei Teilabzug
+2. **22:00:00** — 4 Feuerwehr spawnen bei [-20,0,35] (Löscharbeiten)
+3. **22:00:00** — 4 Sanitäter spawnen (Verletzte versorgen)
+4. Feuerwehr löscht Brände, Sanitäter versorgen Verletzte
+5. Polizei sichert Tatort, Forensik-Teams mit Kameras
+6. Tote werden abtransportiert (Leichen-Säcke)
+
+**Spieler-Aufgabe:**
+
+- Berichte schreiben, Beweise sammeln, Zeugen vernehmen, Gebiet absichern
+
+**Atmosphäre:** Stille nach Sturm, nur Sirenen, Funksprüche
+**GESAMT: 23 NPCs** (2 Pol + 10 SEK + 4 Feu + 4 Sani + 3 Sani)
+**Eskalations-Level: 40%**
+
+---
+
+### 23:00 — NÄCHTLICHE RUHE
+
+**Event: "Calm Returns"**
+
+1. **23:00:00** — Feuerwehr abziehen (4 DESPAWN)
+2. **23:00:00** — Sanitäter abziehen (4 DESPAWN)
+3. **23:00:00** — Alle SEK weg (10 DESPAWN)
+4. **23:00:00** — 8 Polizisten ab, nur Checkpoint bleibt
+
+- Stadt langsam zur Ruhe, Straßen leer
+- Polizei-Checkpoints bleiben, Ausgangssperre
+- Nur noch Patrols unterwegs
+
+**GESAMT: ~12 NPCs** (nur Polizei-Checkpoints)
+**Eskalations-Level: 20%**
+
+---
+
+### 00:00 — MITTERNACHT
+
+**Event: "Day Ends"**
+
+- Statistik-Screen (optional): Tote, Verletzte, Festnahmen, Schaden
+- Stadt im Ausnahmezustand, Notstand ausgerufen
+
+**Eskalations-Level: 15%**
+
+---
+
+### 01:00–05:00 — NACHT-RUHE
+
+- Nur Patrols, vereinzelte Plünderer (optional)
+- Stadt schläft, Reparatur-Teams arbeiten
+- **Eskalations-Level: 10%**
+
+---
+
+### 06:00 — NEUER TAG BEGINNT
+
+**Event: "Cycle Repeats"**
+
+- Zurück zu 06:00 Morgen
+- **Aber:** Nachwirkungen bleiben:
+  - Zerstörung noch sichtbar (Decals bleiben)
+  - Reputation geändert
+  - Moral-Score geändert
+  - NPCs erinnern sich (AI-Memory)
+- Nächster Tag kann anders ablaufen (je nach Spieler-Aktionen)
+
+---
+
+## 🔄 CHUNK 11 — DYNAMISCHES EVENT-SYSTEM & SPIELER-INTERAKTION
+
+### VARIATION & ZUFÄLLIGKEIT
+
+**Nicht jeder Tag ist identisch:**
+
+```
+VARIABLEN DIE EVENTS BEEINFLUSSEN:
+- Spieler-Moral-Score
+- Fraktions-Reputation
+- Wetter (Regen = weniger Demonstranten)
+- Wochentag (Samstag = mehr Demos)
+- Story-Fortschritt (später = extremere Events)
+- Zufall (20% Chance für alternative Events)
+
+ALTERNATIVE EVENT-KETTEN:
+Wenn Moral < -50:
+→ Polizei-Brutalität von Anfang an
+→ NPCs fliehen sofort
+→ Weniger Widerstand
+
+Wenn Moral > +50:
+→ Friedliche Verhandlungen möglich
+→ Demo kann gewaltlos enden
+→ Keine Mob-Angriffe
+
+Wenn Demonstranten-Rep < -50:
+→ Extremere Gewalt von Demonstranten
+→ Mehr Waffen
+→ Frühere Eskalation
+
+ZUFALLS-EVENTS (20% Chance):
+- VIP-Attentat-Versuch (während Rede)
+- Bomben-Drohung (Platz evakuieren)
+- Undercover-Extremist enttarnt
+- Journalist als Geisel genommen
+- Polizei-Verräter sabotiert
+```
+
+---
+
+### SPIELER-INTERAKTION MIT EVENTS
+
+**BEOBACHTEN:**
+
+- Neutral bleiben
+- Events dokumentieren (Fotos, Videos)
+- Beweise sammeln für Tribunal
+
+**EINGREIFEN (POLIZEI-SEITE):**
+
+- Demonstranten festnehmen (vor Eskalation)
+- Deeskalieren (Verhandlungen)
+- Gewalt anwenden (Beschleunigt Eskalation)
+- Befehle geben (Hundertschaft steuern)
+- Wasserwerfer steuern
+- Tränengas werfen
+
+**EINGREIFEN (DEMONSTRANTEN-SEITE):**
+
+- (Nur wenn Spieler Undercover-Mission)
+- Mob anführen, Polizei angreifen, Chaos anrichten
+
+**EVENTS BEEINFLUSSEN:**
+
+- Frühe Festnahme von Rädelsführern = Demo friedlicher
+- Brutale Polizei-Gewalt = Mob erscheint garantiert
+- Verhandlungen bei 12:00 = Kann Demo friedlich beenden
+- Gewalt bei 12:00 = Garantiert Eskalation zu 100%
+
+**KONSEQUENZEN:**
+
+- Jede Aktion ändert Reputation
+- Moral-Score wird beeinflusst
+- Story verzweigt sich
+- NPCs erinnern sich (Tag 2 reagieren anders)
+
+---
+
+### CINEMATIC PRESENTATION
+
+**CUTSCENES:**
+
+- Polizei-Chef Ansage (12:00) = 30 Sek Cutscene
+- Mob-Angriff-Start (19:00) = 20 Sek Cutscene
+- Peak-Chaos-Intro (21:00) = 45 Sek Cutscene
+- Skippable (ESC)
+
+**KAMERA-WORK:**
+
+- Bei Events: Dynamische Kamera-Schwenks
+- Slow-Motion bei Peak-Momenten (optional)
+- Zoom auf wichtige NPCs (Redner, Anführer)
+
+---
+
+## 💾 CHUNK 12 — TECHNISCHE IMPLEMENTATION & QUALITY CONTROL
+
+### EVENT-MANAGER-SYSTEM
+
+```typescript
+interface GameTime {
+  day: number; // 1-365
+  hour: number; // 0-23
+  minute: number; // 0-59
+  realTimeMultiplier: number; // 60 = Standard (1 Min = 1 Std)
+}
+
+interface ScheduledEvent {
+  id: string;
+  triggerTime: { hour: number; minute: number };
+  location: Vector3;
+  eventType: EventType;
+  participants: NPC[];
+  condition?: () => boolean;
+  execute: () => void;
+}
+
+enum EventType {
+  DEMO_START = "demo_start",
+  SPEECH = "speech",
+  POLICE_ANNOUNCEMENT = "police_announcement",
+  CROWD_THROW = "crowd_throw_objects",
+  RIOT_POLICE = "riot_police_arrival",
+  WATER_CANNON = "water_cannon_attack",
+  TEAR_GAS = "tear_gas_deploy",
+  POLICE_CHARGE = "police_charge",
+  MOB_GATHER = "mob_gather",
+  MOB_ATTACK = "mob_attack",
+  BENGALO = "bengalo_ignition",
+  BARRICADES = "barricade_build",
+  CAR_FIRE = "car_fire",
+  SHOOTOUT = "gunfire_exchange",
+}
+
+class EventScheduler {
+  private events: ScheduledEvent[] = [];
+  private currentTime: GameTime;
+
+  constructor() {
+    this.loadEventSchedule();
+    this.startTimeCycle();
+  }
+
+  private startTimeCycle() {
+    setInterval(() => {
+      this.updateTime();
+      this.checkEvents();
+    }, 1000); // Jede Sekunde = 1 Spielminute
+  }
+
+  private checkEvents() {
+    this.events.forEach((event) => {
+      if (this.isEventTime(event) && this.checkCondition(event)) {
+        this.executeEvent(event);
+      }
+    });
+  }
+}
+```
+
+### ESKALATIONS-TIMELINE (bestehend in eventScheduler.ts)
+
+```
+06:00 →  0%  │ Stadt erwacht
+08:00 →  5%  │ Demo-Vorbereitung
+10:00 → 15%  │ Massen-Zustrom
+11:00 → 15%  │ Hauptredner Rede
+11:30 → 25%  │ Aggressive Rhetorik
+12:00 → 45%  │ Polizei-Ultimatum
+12:15 → 60%  │ Erste Gewalt
+12:30 → 70%  │ Hundertschaft
+13:00 → 65%  │ Wasserwerfer
+13:30 → 50%  │ Tränengas
+14:00 → 40%  │ Polizei-Vorstoss
+15:00 → 30%  │ Ruhe vor Sturm
+18:00 → 50%  │ Extremisten sammeln
+19:00 → 80%  │ Mob-Angriff
+19:30 → 85%  │ Bengalo-Inferno
+20:00 → 90%  │ Barrikaden & Brände
+20:30 → 95%  │ SEK-Ankunft
+21:00 → 100% │ PEAK CHAOS
+21:30 → 70%  │ Mob-Rückzug
+22:00 → 40%  │ Aufräumen
+23:00 → 20%  │ Nächtliche Ruhe
+00:00 → 15%  │ Mitternacht
+06:00 → 10%  │ CYCLE RESTART
+```
+
+---
+
+### QUALITY CONTROL CHECKPOINTS
+
+**ZEIT-SYSTEM:**
+
+- [ ] Echtzeit-Uhr läuft (24 Min = 1 Tag)
+- [ ] UI zeigt Zeit korrekt an
+- [ ] Zeit pausierbar im Menü
+- [ ] Multiplikator änderbar (Settings)
+
+**EVENT-SCHEDULER:**
+
+- [ ] Alle 40+ Events programmiert
+- [ ] Trigger-Zeiten exakt wie Spec
+- [ ] Events executieren korrekt
+- [ ] Conditions funktionieren (Reputation-Checks)
+
+**NPC-SPAWNING:**
+
+- [ ] Demonstranten spawnen zu richtigen Zeiten
+- [ ] Extremisten spawnen um 18:00
+- [ ] Hundertschaft spawnt um 12:30
+- [ ] SEK spawnt um 20:30
+- [ ] Max 120 NPCs gleichzeitig (HARTES LIMIT)
+- [ ] Peak ~87 NPCs bei 21:00
+
+**CROWD-BEHAVIOR:**
+
+- [ ] NPCs reagieren auf Reden (Head-Tracking)
+- [ ] Schwenken Fahnen/Schilder
+- [ ] Werfen Objekte bei Trigger
+- [ ] Fliehen bei Gewalt
+- [ ] Greifen an bei Mob-Event
+
+**GEWALT-DARSTELLUNG:**
+
+- [ ] Nahkampf-Animationen funktionieren
+- [ ] Blut-Effekte korrekt
+- [ ] Ragdoll bei K.O.
+- [ ] Schreie/Schmerzenslaute
+
+**SPEZIAL-EFFEKTE:**
+
+- [ ] Wasserwerfer funktioniert (Knockback)
+- [ ] Tränengas-Wolken rendern
+- [ ] Bengalos leuchten rot
+- [ ] Feuer-Effekte (Autos, Barrikaden)
+- [ ] Rauch-Partikel
+
+**AUDIO:**
+
+- [ ] Crowd-Chanting synchron
+- [ ] Schüsse, Explosionen
+- [ ] Sirenen, Hubschrauber
+- [ ] Schreie, Schmerzenslaute
+- [ ] Dynamischer Mix (nicht überladen)
+
+**PERFORMANCE:**
+
+- [ ] ~87 NPCs gleichzeitig: >30 FPS
+- [ ] Alle Partikel-Systeme aktiv: >25 FPS
+- [ ] Keine Crashes bei Event-Wechseln
+- [ ] Memory-Leaks vermieden
+
+---
+
+## 📝 ZUSAMMENFASSUNG
+
+✅ **KOMPLETTES 24-STUNDEN-SYSTEM** — Echtzeit-Uhr (24 Min = 1 Tag), 40+ gescriptete Events, dynamische Tagesabläufe
+
+✅ **BRUTALE DEMO-ESKALATION** — Friedlich (08:00) → Gewalt (12:00) → Chaos (21:00), realistische Progression, keine Zensur
+
+✅ **NPC-LIMIT EINGEHALTEN** — Max 120 gleichzeitig, Peak ~87 bei 21:00, basierend auf generierter NPC_SPAWN_TABELLE
+
+✅ **SPAWN-PLÄTZE BEIBEHALTEN** — Alle Positionen aus eventScheduler.ts und NPC_SPAWN_TABELLE.md übernommen
+
+✅ **12 CHUNKS** — Schritt für Schritt generierbar, jeder Chunk eigenständig implementierbar
+
+✅ **DYNAMIK & VARIATION** — Reputation-abhängig, Spieler-Einfluss, Konsequenzen bleiben
+
+✅ **TECHNISCH SOLIDE** — Event-Scheduler-System, Performance-optimiert, klare Anweisungen
