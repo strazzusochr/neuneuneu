@@ -68,6 +68,10 @@ export const Bakery = ({ position }: { position: [number, number, number] }) => 
 };
 
 export const Cathedral = ({ position }: { position: [number, number, number] }) => {
+    const inGameTime = useGameStore(state => state.gameState.inGameTime);
+    const [h, m] = inGameTime.split(':').map(Number);
+    const isNight = h >= 20 || h < 6;
+
     return (
         <group position={position}>
             {/* Main Body */}
@@ -90,11 +94,28 @@ export const Cathedral = ({ position }: { position: [number, number, number] }) 
                 <coneGeometry args={[1, 15, 8]} />
                 <meshStandardMaterial color="#111111" />
             </mesh>
+            {/* Clock Face (New) */}
+            <group position={[8, 65, 25.1]}>
+                <mesh>
+                    <circleGeometry args={[2.5, 32]} />
+                    <meshStandardMaterial color="#eee" emissive="#ffcc00" emissiveIntensity={isNight ? 0.5 : 0} />
+                </mesh>
+                {/* Hour Hand */}
+                <mesh rotation={[0, 0, -((h % 12) * 30 + m / 2) * (Math.PI / 180)]} position={[0, 0, 0.1]}>
+                    <planeGeometry args={[0.2, 1.5]} />
+                    <meshBasicMaterial color="#000" />
+                </mesh>
+                {/* Minute Hand */}
+                <mesh rotation={[0, 0, -(m * 6) * (Math.PI / 180)]} position={[0, 0, 0.1]}>
+                    <planeGeometry args={[0.1, 2.2]} />
+                    <meshBasicMaterial color="#000" />
+                </mesh>
+            </group>
             {/* Decorative Windows */}
             {[...Array(6)].map((_, i) => (
                 <mesh key={i} position={[12.6, 10 + i * 5, 0]}>
                     <planeGeometry args={[2, 4]} />
-                    <meshStandardMaterial color="#111" />
+                    <meshStandardMaterial color="#111" emissive="#442200" emissiveIntensity={isNight ? 1 : 0} />
                 </mesh>
             ))}
         </group>
