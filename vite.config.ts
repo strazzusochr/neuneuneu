@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const backendPort = Number(env.VITE_BACKEND_PORT ?? 4001)
 
   return {
-  base: '/',
+  base: mode === 'production' ? '/neuneuneu/' : '/',
   plugins: [react()],
   resolve: {
     alias: {
